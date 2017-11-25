@@ -6,7 +6,7 @@
 %}
 
 %union {
-	struct ast *type_ast;
+    struct ast *type_ast;
 }
 
 /* Declared tokens */
