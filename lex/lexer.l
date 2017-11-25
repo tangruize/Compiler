@@ -134,8 +134,8 @@ static void lexilnum(int type) {
 
 static const char *const types[] = {
         "char", "short", "int", "long", "long long",
-        "float", "double"
-                "long int", "long long int",
+        "float", "double",
+        "long int", "long long int",
 };
 
 #define NR_TYPES (sizeof(types) / sizeof(types[0]))
@@ -150,10 +150,6 @@ static void lextype() {
                 yylval.type_ast = alloctypeval(types[i - 4]);
         }
 }
-
-enum {
-    CHAR_T = 0, SHORT_T, INT_T, LONG_T, LLONG_T, FLOAT_T, DOUBLE_T
-};
 
 int whichtype(const char *str) {
     unsigned i = 0;

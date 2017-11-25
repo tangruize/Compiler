@@ -4,16 +4,19 @@
 
 #include <stdlib.h>
 #include <malloc.h>
-#include <err.h>
 #include <stdarg.h>
-#include <string.h>
+#include <assert.h>
+#include <memory.h>
+
+//#define NO_PRINT_AST
 
 struct ast *ast_root;
 
-struct ast *allocast(int nodetype, const char *typename, struct YYLTYPE *pos, int num, ...) {
+struct ast *allocast(int nodetype, const char *name, struct YYLTYPE *pos, int num, ...) {
     va_list ap;
     va_start(ap, num);
     struct ast *node = malloc(sizeof(struct ast));
+    memset(node, 0, sizeof(struct ast));
     if (!node)
         err(EXIT_FAILURE, "malloc");
     if (pos) {
@@ -30,13 +33,14 @@ struct ast *allocast(int nodetype, const char *typename, struct YYLTYPE *pos, in
         node->left = NULL;
     struct ast *p = node->left;
     while (--num > 0) {
+        p->parent = node;
         p->right = va_arg(ap, struct ast*);
+        if (p->right)
+            p->right->pre = p;
         p = p->right;
     }
     va_end(ap);
-    node->right = NULL;
-    node->val = NULL;
-    node->typename = typename;
+    node->name = name;
     node->filename = cur_file;
     return node;
 }
@@ -44,31 +48,27 @@ struct ast *allocast(int nodetype, const char *typename, struct YYLTYPE *pos, in
 #define FUNC_ALLOC(NAME, TYPE, ARGTYPE) \
 struct ast *alloc ## NAME(ARGTYPE arg) { \
     struct ast* node = malloc(sizeof(struct ast)); \
+    memset(node, 0, sizeof(struct ast));\
     if (!node) \
         err(EXIT_FAILURE, "malloc"); \
     node->val = malloc(sizeof(union value)); \
     if (!node->val) \
         err(EXIT_FAILURE, "malloc"); \
-    node->pos = NULL; \
     node->type = TYPE; \
     node->val->NAME = arg; \
-    node->typename = #TYPE; \
+    node->name = #TYPE; \
     node->filename = cur_file; \
-    node->left = node->right = NULL; \
     return node; \
 }
 
 FUNC_ALLOC(numval, INT, long long)
-
 FUNC_ALLOC(fpval, FLOAT, double)
-
 FUNC_ALLOC(idval, ID, char*)
-
 FUNC_ALLOC(typeval, TYPE, const char*)
 
 static void printastdepth(struct ast *root, int depth) {
     if (root->type != NullNode) {
-        printf("%*s%s", depth * 2, depth != 0 ? " " : "", root->typename);
+        printf("%*s%s", depth * 2, depth != 0 ? " " : "", root->name);
         if (root->val)
             switch (root->type) {
                 case TYPE:
@@ -83,6 +83,8 @@ static void printastdepth(struct ast *root, int depth) {
                 case FLOAT:
                     printf(": %lf", root->val->fpval);
                     break;
+                default:
+                    assert(0);
             }
         if (root->pos) {
             printf(" (%d)", root->pos->first_line);
@@ -94,7 +96,9 @@ static void printastdepth(struct ast *root, int depth) {
 }
 
 void printast(struct ast *root) {
+#ifndef NO_PRINT_AST
     printastdepth(root, 0);
+#endif
 }
 
 void freeast(struct ast *root) {
@@ -116,4 +120,33 @@ void freeast(struct ast *root) {
         root->pos = NULL;
     }
     free(root);
+}
+
+struct ast *child(struct ast *a, int n) {
+    struct ast *ret = a->left;
+    if (n > 0) {
+        while (--n && ret)
+            ret = ret->right;
+    }
+    else {
+        n = -n;
+        do {
+            ret = ret->parent;
+        } while (n-- && ret);
+    }
+    return ret;
+}
+
+struct ast *sibling(struct ast *a, int n) {
+    struct ast *ret = a;
+    if (n >= 0) {
+        while (n-- && ret)
+            ret = ret->right;
+    }
+    else {
+        n = -n;
+        while (n-- && ret)
+            ret = ret->pre;
+    }
+    return ret;
 }

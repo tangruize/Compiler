@@ -1,5 +1,5 @@
-#ifndef TREE_H
-#define TREE_H
+#ifndef COMPILER_TREE_H
+#define COMPILER_TREE_H
 
 union value {
     long long numval;
@@ -10,14 +10,14 @@ union value {
 
 struct ast {
     int type;
-    const char *typename;
+    const char *name;
     union value *val;
     struct ast *left;
     struct ast *right;
+    struct ast *pre;
     struct YYLTYPE *pos;
     const char *filename;
-    /* Children never grow up if they depend too much on their parents. :-) */
-    //struct ast* parent;
+    struct ast* parent;
 };
 
 extern struct ast *ast_root;
@@ -29,9 +29,14 @@ enum {
     ErrorNode = -2, NullNode = -1
 };
 
+/* basic type */
+enum {
+    CHAR_T = 0, SHORT_T, INT_T, LONG_T, LLONG_T, FLOAT_T, DOUBLE_T
+};
+
 void freeast(struct ast *root);
 
-struct ast *allocast(int nodetype, const char *typename, struct YYLTYPE *pos, int num, ...);
+struct ast *allocast(int nodetype, const char *name, struct YYLTYPE *pos, int num, ...);
 
 struct ast *allocnumval(long long num);
 
@@ -46,5 +51,8 @@ void printast(struct ast *root);
 #define ALLOCAST(nt, pos, num, ...) allocast(nt, #nt, pos, num, __VA_ARGS__)
 #define ALLOCNODE(nt) allocast(nt, #nt, NULL, 0)
 #define ALLOCERRNODE(nt, pos) allocast(nt, #nt, pos, 0)
+
+struct ast *child(struct ast *a, int n);
+struct ast *sibling(struct ast *a, int n);
 
 #endif

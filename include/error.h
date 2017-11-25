@@ -1,9 +1,10 @@
-#ifndef ERROR_H
-#define ERROR_H
+#ifndef COMPILER_ERROR_H
+#define COMPILER_ERROR_H
 
 #include <err.h>
+#include <assert.h>
 
-//#define NOYYERROR
+#define NOYYERROR
 
 #ifndef NOYYERROR
 #define YYERROR_VERBOSE

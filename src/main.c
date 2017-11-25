@@ -1,7 +1,7 @@
 #include "parser.h"
 #include "lexer.h"
 #include "error.h"
-#include "tree.h"
+#include "semantics.h"
 
 int main(int argc, char *argv[]) {
     init();
@@ -35,6 +35,7 @@ int main(int argc, char *argv[]) {
                    stdout_in_tty ? "\033[0m" : "");
         }
         yyparse();
+        semchecker();
         if (argc != 2) putchar('\n');
         if (infile != stdin) fclose(infile);
         infile = NULL;

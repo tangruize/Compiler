@@ -2,7 +2,6 @@
 #include "lexer.h"
 #include "error.h"
 #include "tree.h"
-
 %}
 
 %union {

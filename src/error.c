@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include <unistd.h>
-#include <errno.h>
 #include <ctype.h>
 #include "lexer.h"
 #include "parser.h"
@@ -78,6 +77,8 @@ static void typeerror(int which, const char *s, va_list ap) {
         case 2:
             type = "B";
             break;
+        default:
+            assert(0);
     }
     fputs(error_tty_prefix, stdout);
     printf("Error type %s at Line %d: ", type, line);
@@ -124,6 +125,6 @@ void yyerror(const char *s, ...) {
 
     vsnprintf(pre_yyerror_buf, 127, s, ap);
     if (islower(pre_yyerror_buf[0]))
-        pre_yyerror_buf[0] = toupper(pre_yyerror_buf[0]);
+        pre_yyerror_buf[0] = (char)toupper(pre_yyerror_buf[0]);
     va_end(ap);
 }
