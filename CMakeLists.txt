@@ -14,6 +14,6 @@ FLEX_TARGET(Scanner lex/lexer.l ${CMAKE_CURRENT_BINARY_DIR}/lexer.c COMPILE_FLAG
 BISON_TARGET(Parser parser/parser.y ${CMAKE_CURRENT_BINARY_DIR}/parser.c COMPILE_FLAGS --defines=${CMAKE_CURRENT_BINARY_DIR}/parser.h)
 ADD_FLEX_BISON_DEPENDENCY(Scanner Parser)
 
-set(SOURCE_FILES src/main.c src/error.c src/tree.c)
+set(SOURCE_FILES lex/lexer.l parser/parser.y src/main.c include/error.h src/error.c include/tree.h src/tree.c)
 add_executable(Compiler ${SOURCE_FILES} ${BISON_Parser_OUTPUTS} ${FLEX_Scanner_OUTPUTS})
 target_link_libraries(Compiler ${FLEX_LIBRARIES} ${BISON_LIBRARIES})
