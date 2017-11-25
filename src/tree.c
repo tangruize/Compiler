@@ -84,7 +84,7 @@ static void printastdepth(struct ast *root, int depth) {
                     printf(": %lf", root->val->fpval);
                     break;
                 default:
-                    assert(0);
+                    abort();
             }
         if (root->pos) {
             printf(" (%d)", root->pos->first_line);

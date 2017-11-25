@@ -76,6 +76,11 @@ void deleteenv() {
     current = pre;
 }
 
+void deleteallenv() {
+    while (current)
+        deleteenv();
+}
+
 struct attr *findvar(const char *s) {
     return current->findvar(s);
 }
@@ -127,7 +132,7 @@ void freeattr(struct attr *a) {
             freearg(a->function->arg_list);
             free(a->function);
         default:
-            assert(0);
+            abort();
     }
 }
 

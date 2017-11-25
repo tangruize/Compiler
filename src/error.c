@@ -78,7 +78,7 @@ static void typeerror(int which, const char *s, va_list ap) {
             type = "B";
             break;
         default:
-            assert(0);
+            abort();
     }
     fputs(error_tty_prefix, stdout);
     printf("Error type %s at Line %d: ", type, line);

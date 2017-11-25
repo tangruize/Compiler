@@ -50,6 +50,7 @@ extern "C" {
 
 void newenv();
 void deleteenv();
+void deleteallenv();
 
 struct attr *findvar(const char *s);
 struct attr *findfunc(const char *s);

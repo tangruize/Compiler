@@ -10,8 +10,34 @@
 
 #include <stdio.h>
 #include <malloc.h>
+#include <stdlib.h>
 
 static struct attr* SEM_Specifier(struct ast *node);
+static void SEM_CompSt(struct ast *node, struct field_t *f);
+static void SEM_Stmt(struct ast *node);
+
+static const char *cur_func = NULL;
+
+static int isequal(struct attr *a, struct attr *b) {
+    if (!a || !b)
+        return 0;
+    //TODO: check type equality
+    if (a->kind != b->kind)
+        return 0;
+    switch (a->kind) {
+        case BASIC:
+            break;
+        case ARRAY:
+            break;
+        case STRUCTURE:
+            break;
+        case FUNCTION:
+            break;
+        default:
+            abort();
+    }
+    return 1;
+}
 
 static struct field_t* SEM_VarDec(struct ast *node, struct attr *a, int ins) {
     struct ast *child1 = child(node, 1);
@@ -23,21 +49,18 @@ static struct field_t* SEM_VarDec(struct ast *node, struct attr *a, int ins) {
         a1->array->size = (int)child(node, 3)->val->numval;
         return SEM_VarDec(child1, a1, ins);
     }
-    else {
-        if (ins && insertvar(child1->val->idval, a) == 0)  //TODO: error
-            printf("error insert %s\n", child1->val->idval);
-        struct field_t *f = malloc(sizeof(struct field_t));
-        f->type = a;
-        f->name = child1->val->idval;
-        f->next = NULL;
-        return f;
-    }
+    if (ins && insertvar(child1->val->idval, a) == 0)  //TODO: error insert
+        printf("error insert %s\n", child1->val->idval);
+    struct field_t *f = malloc(sizeof(struct field_t));
+    f->type = a;
+    f->name = child1->val->idval;
+    f->next = NULL;
+    return f;
 }
 
 static struct field_t* SEM_Dec(struct ast *node, struct attr *a, int ins) {
-    struct ast *child1 = child(node, 1);
     struct ast *child3 = child(node, 3);
-    struct field_t *f = SEM_VarDec(child1, a, ins);
+    struct field_t *f = SEM_VarDec(child(node, 1), a, ins);
     if (child3) {
         //TODO: assign op
     }
@@ -45,9 +68,8 @@ static struct field_t* SEM_Dec(struct ast *node, struct attr *a, int ins) {
 }
 
 static struct field_t* SEM_DecList(struct ast *node, struct attr *a, int ins) {
-    struct ast *child1 = child(node, 1);
     struct ast *child2 = child(node, 2);
-    struct field_t *f = SEM_Dec(child1, a, ins);
+    struct field_t *f = SEM_Dec(child(node, 1), a, ins);
     if (child2)
         f->next = SEM_DecList(child2, a, ins);
     return f;
@@ -63,12 +85,10 @@ static struct field_t* SEM_Def(struct ast *node, int ins) {
 static struct field_t* SEM_DefList(struct ast *node, int ins) {
     if (node->type == NullNode)
         return NULL;
-    struct ast *child1 = child(node, 1);
-    struct ast *child2 = child(node, 2);
-    struct field_t *f = SEM_Def(child1, ins), *p = f;
+    struct field_t *f = SEM_Def(child(node, 1), ins), *p = f;
     while (p->next)
         p = p->next;
-    p->next = SEM_DefList(child2, ins);
+    p->next = SEM_DefList(child(node, 2), ins);
     return f;
 }
 
@@ -164,6 +184,7 @@ static void SEM_FunDec(struct ast *node, struct attr *a, struct field_t **f) {
     to_ins->function = malloc(sizeof(struct func_t));
     to_ins->function->return_type = a;
     to_ins->function->name = child(node, 1)->val->idval;
+    cur_func = to_ins->function->name;
     if (child3->type != RP)
         to_ins->function->arg_list = SEM_VarList(child3, f);
     else
@@ -172,27 +193,121 @@ static void SEM_FunDec(struct ast *node, struct attr *a, struct field_t **f) {
         printf("error insert function %s\n", to_ins->function->name);
 }
 
-static void SEM_Stmt(struct ast *node) {
+static struct attr* SEM_Exp(struct ast *node) {
+    struct ast *child1 = child(node, 1);
+    struct ast *child2 = child(node, 2);
+    struct ast *child3 = child(node, 3);
+    struct attr *a, *b;
+    switch (child1->type) {
+        case Exp:
+            a = SEM_Exp(child1);
+            if (child2->type != LB && child2->type != DOT) {
+                b = SEM_Exp(child3);
+                if (!isequal(a, b)) { //error not match
+                    printf("error type not match\n");
+                }
+                return a;
+            }
+            else if (child2->type == LB) {
+                if (a->kind != ARRAY) //TODO: error expected ARRAY
+                    printf("error expected ARRAY\n");
+                b = SEM_Exp(child3);
+                if (b->kind != TYPE || b->basic != INT_T) //TODO: error expected int
+                    printf("error expected int\n");
+                //TODO: compose array type
+                return a;
+            }
+            else {
+                if (a->kind != STRUCTURE) //TODO: error expected struct
+                    printf("error expected struct\n");
+                //TODO: search each field for ID
+                //TODO: pick up the field type
+            }
+            break;
+        case NOT:
+        case MINUS:
+            return SEM_Exp(child2);
+        case ID:
+            if (!child3) {
+                a = findvar(child1->val->idval);
+                if (a == NULL) //TODO: error not found
+                    printf("error var not found: %s\n", child1->val->idval);
+                //TODO: cannot return NULL
+                return a;
+            }
+            a = findfunc(child1->val->idval);
+            if (a == NULL) //TODO: error func not decl
+                printf("error func not found: %s\n", child1->val->idval);
+            //TODO check arg type
+            return a;
+        case INT:
+        case FLOAT:
+            a = malloc(sizeof(struct attr));
+            a->kind = BASIC;
+            a->basic = child1->type == INT ? INT_T : FLOAT_T;
+            return a;
+        default:
+            break;
+    }
+    abort();
+}
 
+static void SEM_RETURN(struct ast *node) {
+    if (!isequal(findfunc(cur_func), SEM_Exp(node))) //TODO: error not match
+        printf("error return type\n");
+}
+
+static void SEM_IF(struct ast *node) {
+    struct attr *expr_type = SEM_Exp(sibling(node, 2));
+    if (expr_type->kind != TYPE || expr_type->basic != INT_T) //TODO: check expr_type
+        printf("error if/while condition type\n");
+    SEM_Stmt(sibling(node, 4));
+    struct ast *sibling6 = sibling(node, 6);
+    if (sibling6)
+        SEM_Stmt(sibling6);
+}
+
+static void SEM_WHILE(struct ast *node) {
+    SEM_IF(node);
+}
+
+
+static void SEM_Stmt(struct ast *node) {
+    struct ast *child1 = child(node, 1);
+    switch (child1->type) {
+        case Exp:
+            SEM_Exp(child1);
+            break;
+        case CompSt:
+            SEM_CompSt(child1, NULL);
+            break;
+        case RETURN:
+            SEM_RETURN(sibling(child1, 1));
+            break;
+        case IF:
+            SEM_IF(child1);
+            break;
+        case WHILE:
+            SEM_WHILE(child1);
+            break;
+        default:
+            abort();
+    }
 }
 
 static void SEM_StmtList(struct ast *node) {
     if (node->type == NullNode)
         return;
-    struct ast *child1 = child(node, 1);
-    struct ast *child2 = child(node, 2);
-    SEM_Stmt(child1);
-    SEM_StmtList(child2);
+    SEM_Stmt(child(node, 1));
+    SEM_StmtList(child(node, 2));
 }
 
 static void SEM_CompSt(struct ast *node, struct field_t *f) {
     newenv();
     for (; f; f = f->next)
         insertvar(f->name, f->type);
-    struct ast *child2 = child(node, 2);
-    struct ast *child3 = child(node ,3);
-    SEM_DefList(child2, 1);
-    SEM_StmtList(child3);
+    SEM_DefList(child(node, 2), 1);
+    SEM_StmtList(child(node ,3));
     deleteenv();
 }
 
@@ -226,7 +341,7 @@ static void SEM_ExtDefList(struct ast *node) {
 static void SEM_Program(struct ast *node) {
     newenv();
     SEM_ExtDefList(child(node, 1));
-    deleteenv();
+    deleteallenv();
 }
 
 void semchecker() {
