@@ -98,6 +98,17 @@ void NAME(const char* s, ...) { \
 /* error type A */ FUNC_ERROR(lexerror, 0)
 /* error type B */ FUNC_ERROR(syntaxerror, 1)
 
+void semerror(int type, int line, const char *fmt, ...) {
+    fputs(error_tty_prefix, stdout);
+    printf("Error type %d at Line %d: ", type, line);
+    va_list ap;
+    va_start(ap, fmt);
+    vprintf(fmt, ap);
+    fputs(error_tty_suffix, stdout);
+    va_end(ap);
+    putchar('\n');
+}
+
 static char pre_yyerror_buf[128];
 
 void reportpreyyerror() {

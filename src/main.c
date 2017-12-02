@@ -35,7 +35,8 @@ int main(int argc, char *argv[]) {
                    stdout_in_tty ? "\033[0m" : "");
         }
         yyparse();
-        semchecker();
+        if (!error_state)
+            semchecker();
         if (argc != 2) putchar('\n');
         if (infile != stdin) fclose(infile);
         infile = NULL;

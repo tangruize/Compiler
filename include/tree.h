@@ -1,6 +1,8 @@
 #ifndef COMPILER_TREE_H
 #define COMPILER_TREE_H
 
+#include "parser.h"
+
 union value {
     long long numval;
     double fpval;
@@ -49,7 +51,7 @@ struct ast *alloctypeval(const char *type);
 void printast(struct ast *root);
 
 #define ALLOCAST(nt, pos, num, ...) allocast(nt, #nt, pos, num, __VA_ARGS__)
-#define ALLOCNODE(nt) allocast(nt, #nt, NULL, 0)
+#define ALLOCNODE(nt) allocast(nt, #nt, &yylloc, 0)
 #define ALLOCERRNODE(nt, pos) allocast(nt, #nt, pos, 0)
 
 struct ast *child(struct ast *a, int n);

@@ -15,6 +15,7 @@ struct array_t {
 struct field_t {
     const char *name;
     struct attr *type;
+    int isInit;
     struct field_t *next;
 };
 
@@ -34,10 +35,15 @@ struct func_t {
     struct arg_t *arg_list;
 };
 
+struct basic_t {
+    const char *name;
+    int type;
+};
+
 struct attr {
     int kind;
     union {
-        int basic;
+        struct basic_t *basic;
         struct array_t *array;
         struct struct_t *structure;
         struct func_t *function;

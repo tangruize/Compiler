@@ -33,6 +33,11 @@ void reportpreyyerror();
 
 void incerrorstate();
 
+void semerror(int type, int line, const char *fmt, ...);
+
+#define SEMERROR(type, node, ...) semerror(type, node->pos->first_line, semErrorMsg[type], __VA_ARGS__);
+#define SEMERROR_NOVA(type, node) semerror(type, node->pos->first_line, semErrorMsg[type]);
+
 #define LEX_ERROR(MSG, ...) \
 do { \
     lexerror(MSG, __VA_ARGS__); \

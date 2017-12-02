@@ -87,7 +87,7 @@ StmtList: Stmt StmtList { $$ = ALLOCAST(StmtList, &@1, 2, $1, $2); }
 	;
 Stmt: Exp SEMI { $$ = ALLOCAST(Stmt, &@1, 2, $1, $2); }
 	| CompSt { $$ = ALLOCAST(Stmt, &@1, 1, $1); }
-	| RETURN Exp SEMI
+	| RETURN Exp SEMI { $$ = ALLOCAST(Stmt, &@1, 3, $1, $2, $3); }
 	| IF LP Exp RP Stmt %prec LOWER_THAN_ELSE { $$ = ALLOCAST(Stmt, &@1, 5, $1, $2, $3, $4, $5); }
 	| IF LP Exp RP Stmt ELSE Stmt { $$ = ALLOCAST(Stmt, &@1, 7, $1, $2, $3, $4, $5, $6, $7); }
 	| WHILE LP Exp RP Stmt { $$ = ALLOCAST(Stmt, &@1, 5, $1, $2, $3, $4, $5); }

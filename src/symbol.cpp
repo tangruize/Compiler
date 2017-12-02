@@ -6,6 +6,7 @@
 #include <string>
 #include <map>
 #include <assert.h>
+#include <cstring>
 
 using namespace std;
 
@@ -46,6 +47,9 @@ public:
         if (var_table.find(s) != var_table.end())
             return false;
         var_table[s] = a;
+        if (a.kind == BASIC) {
+            a.basic->name = strdup(s.c_str());
+        }
         return true;
     }
 

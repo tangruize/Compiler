@@ -8,7 +8,7 @@
 #include <assert.h>
 #include <memory.h>
 
-//#define NO_PRINT_AST
+#define NO_PRINT_AST
 
 struct ast *ast_root;
 
@@ -58,6 +58,10 @@ struct ast *alloc ## NAME(ARGTYPE arg) { \
     node->val->NAME = arg; \
     node->name = #TYPE; \
     node->filename = cur_file; \
+    node->pos = malloc(sizeof(struct YYLTYPE)); \
+    if (!node->pos) \
+        err(EXIT_FAILURE, "malloc"); \
+    *(node->pos) = yylloc; \
     return node; \
 }
 
@@ -123,7 +127,11 @@ void freeast(struct ast *root) {
 }
 
 struct ast *child(struct ast *a, int n) {
-    struct ast *ret = a->left;
+    struct ast *ret;
+    if (a)
+        ret = a->left;
+    else
+        return NULL;
     if (n > 0) {
         while (--n && ret)
             ret = ret->right;
