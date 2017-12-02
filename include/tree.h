@@ -3,6 +3,10 @@
 
 #include "parser.h"
 
+#ifndef COMPILER_VERSION
+#define COMPILER_VERSION 2
+#endif
+
 union value {
     long long numval;
     double fpval;

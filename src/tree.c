@@ -8,8 +8,6 @@
 #include <assert.h>
 #include <memory.h>
 
-#define NO_PRINT_AST
-
 struct ast *ast_root;
 
 struct ast *allocast(int nodetype, const char *name, struct YYLTYPE *pos, int num, ...) {
@@ -100,7 +98,7 @@ static void printastdepth(struct ast *root, int depth) {
 }
 
 void printast(struct ast *root) {
-#ifndef NO_PRINT_AST
+#if COMPILER_VERSION == 1
     printastdepth(root, 0);
 #endif
 }

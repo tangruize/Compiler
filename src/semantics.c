@@ -72,11 +72,6 @@ static int isequal(struct attr *a, struct attr *b) {
 static struct field_t* SEM_VarDec(struct ast *node, struct attr *a, int ins) {
     struct ast *child1 = child(node, 1);
     struct attr *sa = a;
-//    if (ins) {
-//        if (a->kind == STRUCTURE && a->structure->field && a->structure->name) {
-//            insertvar(a->structure->name, a);
-//        }
-//    }
     if (child1->type == VarDec) {
         struct attr *a1 = malloc(sizeof(struct attr));
         a1->kind = ARRAY;
@@ -86,12 +81,6 @@ static struct field_t* SEM_VarDec(struct ast *node, struct attr *a, int ins) {
         return SEM_VarDec(child1, a1, ins);
     }
     //DONETODO: error insert
-//        printf("error insert %s\n", child1->val->idval);
-//        if (a->kind == STRUCTURE && a->structure->field && a->structure->name) {
-//            if (insertvar(a->structure->name, a)) {
-//                SEMERROR(RedefinedVariable, node, a->structure->name);
-//            }
-//        }
     if (a->kind == STRUCTURE && a->structure->field == NULL && a->structure->name &&
         ((sa = findvar(a->structure->name)) == NULL)) {
 //            printf("no such struct\n");
@@ -610,7 +599,9 @@ static void SEM_Program(struct ast *node) {
 }
 
 void semchecker() {
+#if COMPILER_VERSION > 1
     SEM_Program(ast_root);
+#endif
 }
 
 const char *semErrorMsg[18] = {
