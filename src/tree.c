@@ -80,7 +80,7 @@ static void printastdepth(struct ast *root, int depth) {
                     printf(": %s", root->val->idval);
                     break;
                 case INT:
-                    printf(": %lld", root->val->numval);
+                    printf(": %ld", (long) root->val->numval);
                     break;
                 case FLOAT:
                     printf(": %lf", root->val->fpval);

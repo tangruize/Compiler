@@ -19,8 +19,8 @@ int main(int argc, char *argv[]) {
                 cur_file = "stdin";
                 infile = stdin;
             } else {
-                warn("%s", argv[1]);
-                putchar('\n');
+                warn("%s", argv[i]);
+                if (argc != 2) fputc('\n', stderr);
                 continue;
             }
         }

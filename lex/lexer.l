@@ -6,6 +6,7 @@
 
 #include <limits.h>
 #include <math.h>
+#include <string.h>
 
 int yycolumn = 1;
 
