@@ -1,10 +1,14 @@
 #ifndef COMPILER_TREE_H
 #define COMPILER_TREE_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "parser.h"
 
 #ifndef COMPILER_VERSION
-#define COMPILER_VERSION 2
+#define COMPILER_VERSION 3
 #endif
 
 union value {
@@ -24,6 +28,7 @@ struct ast {
     struct YYLTYPE *pos;
     const char *filename;
     struct ast* parent;
+    char *lex;
 };
 
 extern struct ast *ast_root;
@@ -60,5 +65,9 @@ void printast(struct ast *root);
 
 struct ast *child(struct ast *a, int n);
 struct ast *sibling(struct ast *a, int n);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

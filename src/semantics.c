@@ -548,7 +548,9 @@ static void SEM_StmtList(struct ast *node) {
 }
 
 static void SEM_CompSt(struct ast *node, struct field_t *f) {
+#if COMPILER_VERSION < 3
     newenv();
+#endif
     for (; f; f = f->next) {
         struct attr *a = f->type;
         if (a->kind == STRUCTURE) {
@@ -562,7 +564,9 @@ static void SEM_CompSt(struct ast *node, struct field_t *f) {
     }
     SEM_DefList(child(node, 2), 1);
     SEM_StmtList(child(node ,3));
+#if COMPILER_VERSION < 3
     deleteenv();
+#endif
 }
 
 static void SEM_ExtDef(struct ast *node) {
@@ -594,8 +598,48 @@ static void SEM_ExtDefList(struct ast *node) {
 
 static void SEM_Program(struct ast *node) {
     newenv();
+#if COMPILER_VERSION >= 3
+    struct attr readFunc, writeFunc;
+    readFunc.kind = writeFunc.kind = FUNCTION;
+    readFunc.function = malloc(sizeof(struct func_t));
+    writeFunc.function = malloc(sizeof(struct func_t));
+    memset(readFunc.function, 0, sizeof(struct func_t));
+    memset(writeFunc.function, 0, sizeof(struct func_t));
+
+    readFunc.function->return_type = malloc(sizeof(struct attr));
+    writeFunc.function->return_type = malloc(sizeof(struct attr));
+    memset(readFunc.function->return_type, 0, sizeof(struct attr));
+    memset(writeFunc.function->return_type, 0, sizeof(struct attr));
+
+    readFunc.function->name = "read";
+    writeFunc.function->name = "write";
+
+    readFunc.function->arg_list = NULL;
+    writeFunc.function->arg_list = malloc(sizeof(struct arg_t));
+    memset(writeFunc.function->arg_list, 0, sizeof(struct arg_t));
+
+    readFunc.function->return_type->kind = BASIC;
+    writeFunc.function->return_type->kind = BASIC;
+
+    readFunc.function->return_type->basic = malloc(sizeof(struct basic_t));
+    writeFunc.function->return_type->basic = malloc(sizeof(struct basic_t));
+    memset(readFunc.function->return_type->basic, 0, sizeof(struct basic_t));
+    memset(writeFunc.function->return_type->basic, 0, sizeof(struct basic_t));
+
+    readFunc.function->return_type->basic->type = INT_T;
+    writeFunc.function->return_type->basic->type = INT_T;
+
+    writeFunc.function->arg_list->arg = writeFunc.function->return_type;
+
+    insertfunc(readFunc.function->name, &readFunc);
+    insertfunc(writeFunc.function->name, &writeFunc);
+
+#endif
     SEM_ExtDefList(child(node, 1));
+
+#if COMPILER_VERSION < 3
     deleteallenv();
+#endif
 }
 
 void semchecker() {

@@ -1,9 +1,28 @@
+#include "ir.h"
 #include "parser.h"
 #include "lexer.h"
 #include "error.h"
 #include "semantics.h"
 
+#if COMPILER_VERSION >= 3
+const char *output_file;
+#endif
+
 int main(int argc, char *argv[]) {
+#if COMPILER_VERSION >= 3
+    if (argc < 3)
+        usage();
+    FILE *infile = fopen(argv[1], "r");
+    if (!infile)
+        err(EXIT_FAILURE, "%s", argv[1]);
+    output_file = argv[2];
+    yyrestart(infile);
+    yyparse();
+    if (!error_state)
+        semchecker();
+    if (!error_state)
+        genIR();
+#else
     init();
     FILE *infile = stdin; /* use stdin if no arg supplied */
     cur_file = "stdin";
@@ -46,6 +65,7 @@ int main(int argc, char *argv[]) {
         yyrestart(infile);
         yyparse();
     }
+#endif
     return 0;
 }
 

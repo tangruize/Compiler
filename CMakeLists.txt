@@ -3,10 +3,10 @@ project(Compiler)
 include_directories(include ${CMAKE_CURRENT_BINARY_DIR})
 
 set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2 -Wall -Wextra -Wpedantic -Wno-unused-function -Wno-unused-parameter")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wpedantic -Wno-unused-function -Wno-unused-parameter")
 
 set(CMAKE_C_STANDARD 11)
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O2 -Wall -Wextra -Wpedantic -Wno-unused-function -Wno-unused-parameter")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -Wpedantic -Wno-unused-function -Wno-unused-parameter")
 
 find_package(FLEX)
 find_package(BISON)
@@ -16,10 +16,13 @@ add_flex_bison_dependency(Scanner Parser)
 
 set_property(DIRECTORY PROPERTY ADDITIONAL_MAKE_CLEAN_FILES "${CMAKE_CURRENT_BINARY_DIR}/lexer.h")
 
-set(SOURCE_FILES ${BISON_Parser_OUTPUTS} ${FLEX_Scanner_OUTPUTS} lex/lexer.l parser/parser.y src/main.c src/error.c include/error.h src/tree.c include/tree.h src/semantics.c include/semantics.h src/symbol.cpp include/symbol.h)
+set(SOURCE_FILES ${BISON_Parser_OUTPUTS} ${FLEX_Scanner_OUTPUTS} lex/lexer.l parser/parser.y src/main.c src/error.c include/error.h src/tree.c include/tree.h src/semantics.c include/semantics.h src/symbol.cpp include/symbol.h src/ir.cpp include/ir.h)
 add_executable(CompilerLab1 ${SOURCE_FILES})
 add_executable(CompilerLab2 ${SOURCE_FILES})
+add_executable(CompilerLab3 ${SOURCE_FILES})
 set_target_properties(CompilerLab1 PROPERTIES COMPILE_DEFINITIONS "COMPILER_VERSION=1")
 set_target_properties(CompilerLab2 PROPERTIES COMPILE_DEFINITIONS "COMPILER_VERSION=2")
+set_target_properties(CompilerLab3 PROPERTIES COMPILE_DEFINITIONS "COMPILER_VERSION=3")
 target_link_libraries(CompilerLab1 ${FLEX_LIBRARIES} ${BISON_LIBRARIES})
 target_link_libraries(CompilerLab2 ${FLEX_LIBRARIES} ${BISON_LIBRARIES})
+target_link_libraries(CompilerLab3 ${FLEX_LIBRARIES} ${BISON_LIBRARIES})

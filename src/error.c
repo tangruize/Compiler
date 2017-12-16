@@ -53,7 +53,11 @@ int restorestdin() {
 /* invoke program with argument '--help' */
 void usage() {
     extern char *program_invocation_name;
+#if COMPILER_VERSION >= 3
+    fprintf(stderr, "Usage: %s [CMM source] [OUTPUT ir]\n", program_invocation_name);
+#else
     fprintf(stderr, "Usage: %s [CMM source]\n", program_invocation_name);
+#endif
     exit(EXIT_FAILURE);
 }
 
@@ -107,6 +111,8 @@ void semerror(int type, int line, const char *fmt, ...) {
     fputs(error_tty_suffix, stdout);
     va_end(ap);
     putchar('\n');
+
+    error_state = 1;
 }
 
 static char pre_yyerror_buf[128];

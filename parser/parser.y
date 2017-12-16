@@ -10,7 +10,7 @@
 
 /* Declared tokens */
 %token <type_ast> INT FLOAT SEMI COMMA ASSIGNOP RELOP PLUS MINUS STAR
-%token <type_ast> DIV AND OR DOT NOT LP RP LB RB LC RC TYPE STRUCT
+%token <type_ast> DIV AND ADDRESS OR DOT NOT LP RP LB RB LC RC TYPE STRUCT
 %token <type_ast> RETURN IF ELSE WHILE ID
 
 %type <type_ast> Program ExtDefList ExtDef ExtDecList Specifier StructSpecifier OptTag Tag

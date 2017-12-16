@@ -5,6 +5,10 @@
 #ifndef COMPILER_SYMBOL_H
 #define COMPILER_SYMBOL_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 enum { BASIC, ARRAY, STRUCTURE, FUNCTION};
 
 struct array_t {
@@ -49,10 +53,6 @@ struct attr {
         struct func_t *function;
     };
 };
-
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 void newenv();
 void deleteenv();
