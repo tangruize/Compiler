@@ -38,7 +38,6 @@ MINUS		-
 STAR		\*
 DIV			\/
 AND			&&
-ADDRESS     &
 OR			\|\|
 DOT			\.
 NOT			!
@@ -83,7 +82,6 @@ ILFLO		[0-9]*\.[0-9]*[eE][+-]?([0-9]*[.]?[0-9]*)
 {STAR}		{ L(STAR); }
 {DIV}		{ L(DIV); }
 {AND}		{ L(AND); }
-{ADDRESS}   { L(ADDRESS); }
 {OR}		{ L(OR); }
 {DOT}		{ L(DOT); }
 {NOT}		{ L(NOT); }

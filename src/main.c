@@ -4,12 +4,9 @@
 #include "error.h"
 #include "semantics.h"
 
-#if COMPILER_VERSION >= 3
-const char *output_file;
-#endif
-
 int main(int argc, char *argv[]) {
 #if COMPILER_VERSION >= 3
+    extern const char *output_file;
     if (argc < 3)
         usage();
     FILE *infile = fopen(argv[1], "r");
@@ -54,8 +51,10 @@ int main(int argc, char *argv[]) {
                    stdout_in_tty ? "\033[0m" : "");
         }
         yyparse();
+#if COMPILER_VERSION >= 2
         if (!error_state)
             semchecker();
+#endif
         if (argc != 2) putchar('\n');
         if (infile != stdin) fclose(infile);
         infile = NULL;
