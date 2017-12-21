@@ -65,7 +65,7 @@ int main(int argc, char *argv[]) {
         yyparse();
     }
 #endif
-    return 0;
+    return error_state;
 }
 
 

@@ -502,6 +502,9 @@ static void SEM_IF(struct ast *node) {
     while (expr_type->kind == ARRAY) {
         expr_type = expr_type->array->type;
     }
+    if (expr_type->kind == FUNCTION) {
+        expr_type = expr_type->function->return_type;
+    }
     if (expr_type->kind != BASIC || expr_type->basic->type != INT_T) { //DONETODO: check expr_type
 //        printf("error if/while condition type\n");
         SEMERROR(NotInteger, node, "#IF/WHILE CONDITION#");
