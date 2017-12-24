@@ -1,8 +1,13 @@
-#include "ir.h"
 #include "parser.h"
 #include "lexer.h"
 #include "error.h"
+
+#if COMPILER_VERSION >= 2
 #include "semantics.h"
+#endif
+#if COMPILER_VERSION >= 3
+#include "ir.h"
+#endif
 
 int main(int argc, char *argv[]) {
 #if COMPILER_VERSION >= 3

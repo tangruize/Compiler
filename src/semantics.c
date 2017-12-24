@@ -2,7 +2,10 @@
 // Created by tangruize on 17-11-25.
 //
 
+#if COMPILER_VERSION >= 2
+
 #include "semantics.h"
+
 #include "tree.h"
 #include "error.h"
 #include "parser.h"
@@ -645,12 +648,6 @@ static void SEM_Program(struct ast *node) {
 #endif
 }
 
-void semchecker() {
-#if COMPILER_VERSION > 1
-    SEM_Program(ast_root);
-#endif
-}
-
 const char *semErrorMsg[18] = {
         "Other errors: %s",
         "Undefined variable \"%s\".",
@@ -671,3 +668,13 @@ const char *semErrorMsg[18] = {
         "Duplicated name \"%s\".",
         "Undefined structure \"%s\".",
 };
+
+void semchecker() {
+    SEM_Program(ast_root);
+}
+
+#else
+
+typedef int make_iso_compilers_happy;
+
+#endif

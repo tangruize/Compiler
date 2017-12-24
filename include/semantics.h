@@ -5,6 +5,8 @@
 #ifndef COMPILER_TYPE_H
 #define COMPILER_TYPE_H
 
+#if COMPILER_VERSION >= 2
+
 void semchecker();
 
 enum {
@@ -14,6 +16,8 @@ enum {
     DuplicatedStructName, UndefinedStruct
 };
 
-const char *semErrorMsg[18];
+extern const char *semErrorMsg[18];
+
+#endif
 
 #endif //COMPILER_TYPE_H

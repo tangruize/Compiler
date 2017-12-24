@@ -5,6 +5,8 @@
 #ifndef COMPILER_SYMBOL_H
 #define COMPILER_SYMBOL_H
 
+#if COMPILER_VERSION >= 2
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -68,6 +70,8 @@ void freeattr(struct attr *a);
 
 #ifdef __cplusplus
 }
+#endif
+
 #endif
 
 #endif //COMPILER_SYMBOL_H

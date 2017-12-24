@@ -2,10 +2,13 @@
 // Created by tangruize on 17-11-25.
 //
 
+#if COMPILER_VERSION >= 2
+
 #include "symbol.h"
+
 #include <string>
 #include <map>
-#include <assert.h>
+#include <cassert>
 #include <cstring>
 
 using namespace std;
@@ -141,3 +144,5 @@ void freeattr(struct attr *a) {
 }
 
 }
+
+#endif

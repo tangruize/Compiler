@@ -2,10 +2,14 @@
 // Created by tangruize 17-12-15.
 //
 
+#if COMPILER_VERSION >= 3
+
 #include "ir.h"
+
 #include "tree.h"
 #include "symbol.h"
 
+#include <utility>
 #include <string>
 #include <vector>
 #include <deque>
@@ -13,9 +17,9 @@
 #include <map>
 #include <algorithm>
 #include <iostream>
+#include <fstream>
 #include <cassert>
 #include <cstring>
-#include <fstream>
 
 using namespace std;
 
@@ -24,51 +28,90 @@ using namespace std;
 const char *output_file;
 
 enum {IR_NONE = 0, OP_VARIABLE = 1, OP_INTCONST, OP_LABEL};
-enum {IC_ADD = 1, IC_SUB, IC_MUL, IC_DIV, IC_ASSIGN, IC_DEREF, IC_DEREF_L, IC_REF,
-    IC_GOTO, IC_RETURN, IC_DEC, IC_LABEL, IC_FUNC, IC_CALL, IC_PARAM, IC_ARG, IC_ARGADDR, IC_READ, IC_WRITE,
-    IC_RELOP, IC_EQ = IC_RELOP, IC_NE, IC_LT, IC_GT, IC_LE, IC_GE, IC_AND, IC_OR, IC_RELOP_END};
+enum { IC_ADD = 1, IC_SUB, IC_MUL, IC_DIV,
+    IC_ASSIGN, IC_REF, IC_DEREF, IC_DEREF_L,
+    IC_NONVAR, IC_ARG = IC_NONVAR, IC_ARGADDR, IC_RETURN, IC_CALL,
+    IC_FUNC, IC_GOTO, IC_DEC, IC_LABEL, IC_PARAM, IC_READ, IC_WRITE,
+    IC_NONVAR_LAST = IC_WRITE,
+    IC_RELOP, IC_EQ = IC_RELOP, IC_NE, IC_LT, IC_GT, IC_LE, IC_GE,
+    IC_AND, IC_OR, IC_RELOP_LAST = IC_OR};
 
 static const vector<string> relOp = {"==", "!=", "<", ">", "<=", ">="};
 static const char *icFmt[] = {
 /* IR_NONE */   "",
-/* IC_ADD */    "%s := %s + %s\n",
-/* IC_SUB */    "%s := %s - %s\n",
-/* IC_MUL */    "%s := %s * %s\n",
-/* IC_DIV */    "%s := %s / %s\n",
-/* IC_ASSIGN */ "%s := %s\n",
-/* IC_DEREF */  "%s := *%s\n",
-/* IC_DEREF_L*/ "*%s := %s\n",
-/* IC_REF */    "%s := &%s\n",
-/* IC_GOTO */   "GOTO %s\n",
-/* IC_RETURN */ "RETURN %s\n",
-/* IC_DEC */    "DEC %s %s\n",
-/* IC_LABEL */  "LABEL %s :\n",
-/* IC_FUNC */   "FUNCTION %s :\n",
-/* IC_CALL */   "%s := CALL %s\n",
-/* IC_PARAM */  "PARAM %s\n",
-/* IC_ARG */    "ARG %s\n",
-/* IC_ARGADDR */"ARG &%s\n",
-/* IC_READ */   "READ %s\n",
-/* IC_WRITE */  "WRITE %s\n",
-/* IC_EQ */     "IF %s == %s GOTO %s\n",
-/* IC_NE */     "IF %s != %s GOTO %s\n",
-/* IC_LT */     "IF %s < %s GOTO %s\n",
-/* IC_GT */     "IF %s > %s GOTO %s\n",
-/* IC_LE */     "IF %s <= %s GOTO %s\n",
-/* IC_GE */     "IF %s >= %s GOTO %s\n"
+/* 1  IC_ADD */    "%s := %s + %s\n",
+/* 2  IC_SUB */    "%s := %s - %s\n",
+/* 3  IC_MUL */    "%s := %s * %s\n",
+/* 4  IC_DIV */    "%s := %s / %s\n",
+/* 5  IC_ASSIGN */ "%s := %s\n",
+/* 6  IC_REF */    "%s := &%s\n",
+/* 7  IC_DEREF */  "%s := *%s\n",
+/* 8  IC_DEREF_L*/ "*%s := %s\n",
+/* 9  IC_ARG */    "ARG %s\n",
+/* 10 IC_ARGADDR */"ARG &%s\n",
+/* 11 IC_RETURN */ "RETURN %s\n",
+/* 12 IC_CALL */   "%s := CALL %s\n",
+/* 13 IC_FUNC */   "FUNCTION %s :\n",
+/* 14 IC_GOTO */   "GOTO %s\n",
+/* 15 IC_DEC */    "DEC %s %s\n",
+/* 16 IC_LABEL */  "LABEL %s :\n",
+/* 17 IC_PARAM */  "PARAM %s\n",
+/* 18 IC_READ */   "READ %s\n",
+/* 19 IC_WRITE */  "WRITE %s\n",
+/* 20 IC_EQ */     "IF %s == %s GOTO %s\n",
+/* 21 IC_NE */     "IF %s != %s GOTO %s\n",
+/* 22 IC_LT */     "IF %s < %s GOTO %s\n",
+/* 23 IC_GT */     "IF %s > %s GOTO %s\n",
+/* 24 IC_LE */     "IF %s <= %s GOTO %s\n",
+/* 25 IC_GE */     "IF %s >= %s GOTO %s\n"
+};
+
+static const char *test_icFmt[] = {
+/* IR_NONE */   "",
+/* 1  IC_ADD */    "%s(%d) := %s(%d) + %s(%d)\n",
+/* 2  IC_SUB */    "%s(%d) := %s(%d) - %s(%d)\n",
+/* 3  IC_MUL */    "%s(%d) := %s(%d) * %s(%d)\n",
+/* 4  IC_DIV */    "%s(%d) := %s(%d) / %s(%d)\n",
+/* 5  IC_ASSIGN */ "%s(%d) := %s(%d)\n",
+/* 6  IC_REF */    "%s(%d) := &%s(%d)\n",
+/* 7  IC_DEREF */  "%s(%d) := *%s(%d)\n",
+/* 8  IC_DEREF_L*/ "*%s(%d) := %s(%d)\n",
+/* 9  IC_ARG */    "ARG %s(%d)\n",
+/* 10 IC_ARGADDR */"ARG &%s(%d)\n",
+/* 11 IC_RETURN */ "RETURN %s(%d)\n",
+/* 12 IC_CALL */   "%s(%d) := CALL %s(%d)\n",
+/* 13 IC_FUNC */   "FUNCTION %s(%d) :\n",
+/* 14 IC_GOTO */   "GOTO %s(%d)\n",
+/* 15 IC_DEC */    "DEC %s(%d) %s(%d)\n",
+/* 16 IC_LABEL */  "LABEL %s(%d) :\n",
+/* 17 IC_PARAM */  "PARAM %s(%d)\n",
+/* 18 IC_READ */   "READ %s(%d)\n",
+/* 19 IC_WRITE */  "WRITE %s(%d)\n",
+/* 20 IC_EQ */     "IF %s(%d) == %s(%d) GOTO %s(%d)\n",
+/* 21 IC_NE */     "IF %s(%d) != %s(%d) GOTO %s(%d)\n",
+/* 22 IC_LT */     "IF %s(%d) < %s(%d) GOTO %s(%d)\n",
+/* 23 IC_GT */     "IF %s(%d) > %s(%d) GOTO %s(%d)\n",
+/* 24 IC_LE */     "IF %s(%d) <= %s(%d) GOTO %s(%d)\n",
+/* 25 IC_GE */     "IF %s(%d) >= %s(%d) GOTO %s(%d)\n"
 };
 
 class Operand {
 public:
     int kind;
     string value;
-    Operand(): kind(IR_NONE) {}
-    Operand(const string &v): kind(OP_VARIABLE), value(v) {}
-    Operand(const char *v):   kind(OP_VARIABLE), value(v) {}
-    Operand(int k, const string &v): kind(k), value(v) {}
-    Operand(int intconst): kind(OP_INTCONST), value(to_string(intconst)) {}
+    int active; // neg: nonactive; 0: always active; pos: next usage
+    Operand(): kind(IR_NONE), active(-1) {}
+    Operand(string v): kind(OP_VARIABLE), value(std::move(v)), active(-1) {} // NOLINT
+    Operand(const char *v):   kind(OP_VARIABLE), value(v), active(-1) {} // NOLINT
+    Operand(int k, string v): kind(k), value(std::move(v)), active(-1) {}
+    Operand(int intconst): kind(OP_INTCONST), value(to_string(intconst)), active(-1) {} // NOLINT
     string str() const { return kind != OP_INTCONST ? value : "#" + value; }
     bool getInt(int &i) const { if (kind == OP_INTCONST) i = atoi(value.c_str()); return kind == OP_INTCONST; }
+    void clear() { kind = IR_NONE; value.clear(); }
+    Operand &makeActive() { active = 0; return *this; }
+    void setActive(int i) { active = i; }
+    int nextActive() const { return active; }
+    bool operator==(const Operand &rval) { return kind == rval.kind && value == rval.value; }
 };
 
 typedef const Operand C_OP;
@@ -80,43 +123,70 @@ class InterCode {
 public:
     int kind;
     Operand target, arg1, arg2;
-    InterCode(int k = IR_NONE): kind(k) {}
-    InterCode(int k, C_OP &t): kind(k), target(t) {}
-    InterCode(int k, C_OP &t, C_OP &a1): kind(k), target(t), arg1(a1) {}
-    InterCode(int k, C_OP &t, C_OP &a1, C_OP &a2):
-            kind(k), target(t), arg1(a1), arg2(a2) {}
-    C_OP &at(size_t i) const {
+    explicit InterCode(int k = IR_NONE): kind(k) {}
+    InterCode(int k, Operand t): kind(k), target(move(t)) {}
+    InterCode(int k, Operand t, Operand a1): kind(k), target(move(t)), arg1(move(a1)) {}
+    InterCode(int k, Operand t, Operand a1, Operand a2):
+            kind(k), target(move(t)), arg1(move(a1)), arg2(move(a2)) {}
+    C_OP &at(int i) const {
         switch(i) {
             case 1:  return arg1;
             case 2:  return arg2;
             default: return target;
         }
     }
-    C_OP &operator[](size_t i) const { return at(i); }
-    Operand &operator[](size_t i) { return const_cast<Operand &>(at(i)); }
-    bool doArith(Operand &op) {
+    C_OP &operator[](int i) const { return at(i); }
+    Operand &operator[](int i) { return const_cast<Operand &>(at(i)); }
+    bool doArith() {
         if (kind >= IC_ADD && kind <= IC_DIV) {
             int a1, a2;
-            if (arg1.getInt(a1)) {
-                if (arg2.getInt(a2))
-                    switch (kind) {
-                        case IC_ADD: a1 += a2; break;
-                        case IC_SUB: a1 -= a2; break;
-                        case IC_MUL: a1 *= a2; break;
-                        default:     a1 /= a2;
-                    }
-                else if (kind == IC_SUB)
-                    a1 = -a1;
-                else
-                    return false;
-                arg2.kind = IR_NONE;
+            bool isA1 = arg1.getInt(a1), isA2 = arg2.getInt(a2);
+            if (arg2.kind == IR_NONE && kind == IC_SUB) {
+                a1 = -a1;
+                kind = IC_ASSIGN;
+                return true;
+            }
+            else if (isA1 && isA2) {
+                switch (kind) {
+                    case IC_ADD: a1 += a2; break;
+                    case IC_SUB: a1 -= a2; break;
+                    case IC_MUL: a1 *= a2; break;
+                    default:     a1 /= a2;
+                }
+                arg2.clear();
                 arg1 = Operand(a1);
                 kind = IC_ASSIGN;
                 return true;
             }
+            else if (isA1 || isA2) {
+                if (isA1 && a1 == 0) {
+                    if (kind == IC_MUL || kind == IC_DIV) {
+                        kind = IC_ASSIGN;
+                        arg2.clear();
+                        arg1 = OP_ZERO;
+                    }
+                    else if (kind == IC_ADD) {
+                        kind = IC_ASSIGN;
+                        arg1 = arg2;
+                        arg2.clear();
+                    }
+                }
+                else if (isA2 && a2 == 0) {
+                    if (kind == IC_MUL) {
+                        kind = IC_ASSIGN;
+                        arg2.clear();
+                        arg1 = OP_ZERO;
+                    }
+                    else if (kind == IC_ADD || kind == IC_SUB) {
+                        kind = IC_ASSIGN;
+                        arg2.clear();
+                    }
+                }
+            }
         }
         return false;
     }
+    void disable() { kind = IR_NONE; target.clear(); arg1.clear(); arg2.clear(); }
 };
 typedef const InterCode C_IC;
 
@@ -137,13 +207,56 @@ private:
     string curArray;
     int curDim;
 
+private: // for optimization
+    vector<int> basicBlocks;
+    set<int> functions;
+    vector<set<int>> edges;
+    vector<map<string, bool>> use; //false: assign before use, true: used
+    map<string, int> labels;
+    map<int, int> labelInBB;
+    map<string, int> lastUsages;
+    bool isOpted;
+    void doSetUsage(Operand &op, int blk, const int *i = nullptr);
+    void setUsage(Operand &op, int blk, int i) { doSetUsage(op, blk, &i); }
+    void unsetUsage(Operand &op, int blk)         { doSetUsage(op, blk); }
+    void optimizeAssign();
+    bool canDisable(const string &val, int exclude) {
+        for (int i = (int)use.size() - 1; i >= 0; --i) {
+            if (i != exclude) {
+                auto it = use[i].find(val);
+                if (it != use[i].end())
+                    return false;
+            }
+        }
+        return true;
+    }
+
+public:
+    void buildBB();
+    void buildActive();
+
 public:
     IrSim(): tmpSeq(1), varSeq(1), labelSeq(1), curDim(-1) { pb = new char[PBSIZE]; }
     ~IrSim() { delete[] pb; }
     Operand newTmpVar() { return Operand(OP_VARIABLE, tmpVarPrefix + to_string(tmpSeq++)); }
     Operand newLabel()  { return Operand(OP_LABEL,    labelPrefix  + to_string(labelSeq++)); }
     Operand newVar()    { return Operand(OP_VARIABLE, VarPrefix    + to_string(varSeq++)); }
-    IrSim &commitIc(C_IC &ic) { if (ic.kind && ic[0].kind) irList.push_back(ic); return *this; }
+    IrSim &commitIc(C_IC &ic) {
+        if (!ic.kind || !ic[0].kind)
+            return *this;
+        if (ic.kind == IC_ARG) {
+            auto it = irList.rbegin();
+            if (it != irList.rend() && it->kind == IC_REF && it->target.value == ic.target.value) {
+                *it = icArgAddr(it->arg1);
+                return *this;
+            }
+        }
+        else if (ic.kind == IC_LABEL) {
+            labels[ic.target.value] = (int)irList.size();
+        }
+        irList.push_back(ic);
+        return *this;
+    }
     IrSim &operator<<(C_IC &ic) { return commitIc(ic); }
 
     int ast2ic(ast *node) const {
@@ -158,7 +271,7 @@ public:
             case AND:      return IC_AND;
             case OR:       return IC_OR;
             case RELOP:    return IC_RELOP + (find(relOp.begin(), relOp.end(), node->lex) - relOp.begin());
-            default:       abort();
+            default:       assert(false);
         }
     }
 
@@ -172,9 +285,17 @@ public:
     InterCode icRead(C_OP &t)     const { return icNoOp(IC_READ, t); }
     InterCode icWrite(C_OP &t)    const { return icNoOp(IC_WRITE, t); }
     InterCode icGoto(C_OP &t)     const { return icNoOp(IC_GOTO, t); }
-    InterCode icArg(C_OP &t)      const { return icNoOp(IC_ARG, t); }
     InterCode icArgAddr(C_OP &t)  const { return icNoOp(IC_ARGADDR, t); }
     InterCode icParam(C_OP &t)    { argSet.insert(t.value); return icNoOp(IC_PARAM, t); }
+    InterCode icArg(C_OP &t)      {
+        auto it = irList.rbegin();
+        if (it != irList.rend() && it->kind == IC_REF && it->target.value == t.value) {
+            InterCode ret = icArgAddr(it->arg1);
+            irList.pop_back();
+            return ret;
+        }
+        return icNoOp(IC_ARG, t);
+    }
 
     InterCode icDec(C_OP &t, C_OP &a1)    const { return icUnaryOp(IC_DEC, t, a1); }
     InterCode icCall(C_OP &t, C_OP &a1)   const { return icUnaryOp(IC_CALL, t, a1); }
@@ -215,8 +336,44 @@ public:
         return pb;
     }
     const char *print(C_IC &i) const { return print3(i); }
+
+    const char *test_print3(C_IC &i) const {
+        if (i.arg2.kind == IR_NONE) return test_print2(i);
+        if (i.kind < IC_RELOP)
+            snprintf(pb, PBSIZE, test_icFmt[i.kind],
+                     i[0].str().c_str(), i[0].active,
+                     i[1].str().c_str(), i[1].active,
+                     i[2].str().c_str(), i[2].active);
+        else
+            snprintf(pb, PBSIZE, test_icFmt[i.kind],
+                     i[1].str().c_str(), i[1].active,
+                     i[2].str().c_str(), i[2].active,
+                     i[0].str().c_str(), i[0].active);
+        return pb;
+    }
+    const char *test_print2(C_IC &i) const {
+        if (i.arg1.kind == IR_NONE) return test_print1(i);
+        if (i.kind == IC_SUB)
+            snprintf(pb, PBSIZE, test_icFmt[i.kind],
+                     i[0].str().c_str(), i[0].active,
+                     OP_ZERO.str().c_str(), 0,
+                     i[1].str().c_str(), i[1].active);
+        else
+            snprintf(pb, PBSIZE, test_icFmt[i.kind],
+                     i[0].str().c_str(), i[0].active,
+                     i[1].str().c_str(), i[1].active);
+        return pb;
+    }
+    const char *test_print1(C_IC &i) const {
+        snprintf(pb, PBSIZE, test_icFmt[i.kind], i[0].str().c_str(), i[0].active);
+        return pb;
+    }
+    const char *test_print(C_IC &i) const { return test_print3(i); }
     void printStream(ostream &out) const {
         for_each(irList.begin(), irList.end(), [&out, this](C_IC &i){ out << print(i); });
+    }
+    void test_printStream(ostream &out) const {
+        for_each(irList.begin(), irList.end(), [&out, this](C_IC &i){ out << test_print(i); });
     }
 
     void setCurArray(const string &s) { curArray = s; }
@@ -226,7 +383,150 @@ public:
     int &getCurDim() { return curDim; }
 
     bool isArg(const string &s) { return argSet.count(s) != 0; }
+    bool isGoto(int k) { return k == IC_GOTO || (k >= IC_RELOP && k <= IC_RELOP_LAST); }
+
+    void optimize();
 };
+
+void IrSim::buildBB() {
+    int i = 0;
+    for (auto it = irList.begin(); it != irList.end(); ++it, ++i) {
+        int k = it->kind;
+        if (k == IC_FUNC) {
+            basicBlocks.push_back(i);
+            functions.insert(i);
+        }
+        else if (isGoto(k)) {
+            int labelNo = labels[it->target.value];
+            labelInBB[labelNo] = (int)basicBlocks.size();
+            basicBlocks.push_back(labelNo);
+            basicBlocks.push_back(i + 1);
+        }
+    }
+    basicBlocks.push_back((int)irList.size());
+    std::sort(basicBlocks.begin(), basicBlocks.end(), [](int a, int b) { return a <= b; });
+    auto last = std::unique(basicBlocks.begin(), basicBlocks.end());
+    basicBlocks.erase(last, basicBlocks.end());
+    assert(!basicBlocks.empty());
+
+    for (auto &it : labelInBB)
+        it.second = (int)(find(basicBlocks.begin(), basicBlocks.end(), it.first) - basicBlocks.begin());
+    int size = (int)basicBlocks.size() - 1;
+    edges.resize((size_t)size);
+    for (i = 0; i < size; ++i) { // build edges
+        InterCode &bbend = irList[basicBlocks[i + 1] - 1];
+        InterCode &bbnext = irList[basicBlocks[i + 1]];
+        if (isGoto(bbend.kind))
+            edges[i].insert(labelInBB[labels[bbend.target.value]]);
+        if (i + 1 != size && functions.count(basicBlocks[i + 1]) == 0) {
+            if (bbnext.kind == IC_GOTO)
+                edges[i].insert(labelInBB[labels[bbnext.target.value]]);
+            else
+                edges[i].insert(i + 1);
+        }
+    }
+}
+
+void IrSim::buildActive() {
+    int size = (int)edges.size();
+    use.clear();
+//    lastUsages.clear();
+    use.resize((size_t)size);
+    for (int i = 0; i < size; ++i) {
+        lastUsages.clear();
+        for (int j = (int) basicBlocks[i], k = (int) basicBlocks[i + 1] - 1; k >= j; --k) {
+            int kind = irList[k].kind;
+            if (kind < IC_NONVAR || kind > IC_NONVAR_LAST) {
+                if (kind != IC_DEREF_L)
+                    unsetUsage(irList[k][0], i);
+                else
+                    setUsage(irList[k][0], i, k);
+                setUsage(irList[k][1], i, k);
+                setUsage(irList[k][2], i ,k);
+            }
+            else if (kind == IC_WRITE || kind == IC_ARG || kind == IC_ARGADDR || kind == IC_RETURN || kind == IC_CALL) {
+                setUsage(irList[k][0], i, k);
+            }
+        }
+    }
+}
+
+void IrSim::optimizeAssign() {
+    isOpted = false;
+    int size = (int)edges.size();
+    for (int i = 0; i < size; ++i) {
+        for (int k = (int) basicBlocks[i], j = (int) basicBlocks[i + 1] - 1; k <= j; ++k) {
+            int kind = irList[k].kind;
+            if (kind == IC_ASSIGN) {
+                int m = irList[k].target.active;
+                if (irList[k].target.value[0] == 'v')
+                    m = -1;
+                if (m > 0) {
+                    string val = irList[k].target.value;
+                    string right = irList[k].arg1.value;
+                    kind = irList[k].arg1.kind;
+                    while (m > 0) {
+                        int n = 0;
+                        for (; n < 3; ++n) {
+                            if (irList[m][n].value == val) {
+                                isOpted = true;
+                                irList[m][n].value = right;
+                                irList[m][n].kind = kind;
+                                int active = irList[m][n].active;
+                                irList[m].doArith();
+                                m = active;
+                                irList[m][n].active = 0;
+                                break;
+                            }
+                        }
+                        if (n == 3) {
+                            cerr << "debug: index val != val (should not happen, ignore optimizing)" << endl;
+                            m = -1;
+                        }
+                    }
+                }
+                else if (irList[k].target.active != 0 && irList[k].target.value[0] != 'v') {
+                    cerr << "debug: target < 0 (should not happen, ignore optimizing)" << endl;
+                }
+                if (m == 0 && canDisable(irList[k].target.value, i)) {
+                    irList[k].disable();
+                    isOpted = true;
+                }
+            }
+            else if (kind >= IC_ADD && kind <= IC_ASSIGN) {
+                if (irList[k].doArith())
+                    isOpted = true;
+            }
+        }
+    }
+}
+
+void IrSim::optimize() {
+//    buildBB();
+    do {
+        buildActive();
+        optimizeAssign();
+    } while (isOpted);
+}
+
+void IrSim::doSetUsage(Operand &op, int blk, const int *i) {
+    if (op.kind != OP_VARIABLE) return;
+    auto it = lastUsages.find(op.value);
+    auto use_it = use[blk].find(op.value);
+    if (it != lastUsages.end()) op.setActive(it->second);
+    else op.makeActive();
+    if (i) { //right
+        lastUsages[op.value] = *i;
+        if (use_it == use[blk].end())
+            use[blk][op.value] = true;
+    }
+    else { //left
+        if (it != lastUsages.end())
+            lastUsages.erase(it);
+        if (use_it == use[blk].end())
+            use[blk][op.value] = false;
+    }
+}
 
 static IrSim irSim;
 
@@ -236,7 +536,7 @@ private:
     string newName;
 
 public:
-    Array() {}
+    Array() = default;
     Array(const string &name, attr *a) {
         newName = name;
         while (a->kind == ARRAY) {
@@ -251,7 +551,7 @@ public:
             directSize[i] *= directSize[i - 1];
     }
     int getSize(int i) {
-        if (i >= (int)directSize.size() || i < 0) assert(false);
+        assert(i < (int)directSize.size() && i >= 0);
         return directSize[i];
     }
     int getSize() { return *(directSize.rbegin()); }
@@ -260,7 +560,7 @@ public:
 static map<string, Array> arrays;
 static map<string, string> basics;
 
-static const char *TR_VarDec(ast *node, int *size = NULL);
+static const char *TR_VarDec(ast *node, int *size = nullptr);
 static void TR_CompSt(ast *node);
 
 extern "C" void genIR() {
@@ -278,8 +578,24 @@ extern "C" void genIR() {
         TR_CompSt(child(ext, 3));
         node = child(node, 2);
     }
-    irSim.printStream(cout);
-    ofstream out(output_file);
+//    irSim.printStream(cout);
+
+    ofstream out(output_file + string(".orig.ir"));
+    if (out.is_open()) {
+        irSim.printStream(out);
+        out.close();
+    }
+
+    irSim.buildBB();
+    irSim.buildActive();
+    out.open(output_file + string(".test.ir"));
+    if (out.is_open()) {
+        irSim.test_printStream(out);
+        out.close();
+    }
+
+    irSim.optimize();
+    out.open(output_file);
     if (out.is_open()) {
         irSim.printStream(out);
         out.close();
@@ -315,14 +631,14 @@ static void TR_INT(ast *node, C_OP &place) {
 
 static void TR_ASSIGNOP(ast *node, C_OP &place) {
     ast *pre_sibling1 = sibling(node, -1), *exp1_id_node = child(pre_sibling1, 1);
-    Operand t1 = irSim.newTmpVar(), t2;
+    Operand t1 = irSim.newTmpVar();
     if (exp1_id_node->type == ID) {
         TR_Exp(sibling(node, 1), t1);
         irSim << irSim.icAssign(basics[exp1_id_node->lex], t1) << irSim.icAssign(place, basics[exp1_id_node->lex]);
         return;
     }
     //ARRAY
-    t2 = irSim.newTmpVar();
+    Operand t2 = irSim.newTmpVar();
     TR_Exp(sibling(node, 1), t2);
     TR_Exp(pre_sibling1, t1);
     if (!irSim.useLastArrayAddr()) assert(false);
@@ -331,7 +647,7 @@ static void TR_ASSIGNOP(ast *node, C_OP &place) {
 
 static void TR_ARITH(ast *node, C_OP &place) {
     int type = irSim.ast2ic(node);
-    if (type >= IC_RELOP && type < IC_RELOP_END) {
+    if (irSim.isGoto(type)) {
         Operand label1 = irSim.newLabel(), label2 = irSim.newLabel();
         irSim << irSim.icAssign(place, OP_ZERO);
         TR_Cond(node, label1, label2);
@@ -371,17 +687,17 @@ static void TR_CallFunc(ast *node, C_OP &place) {
 }
 
 static void TR_LB(ast *node, C_OP &place) { //node is LB
-    Operand t1 = irSim.newTmpVar(), t2 = irSim.newTmpVar();
+    Operand t1 = irSim.newTmpVar(), t2 = irSim.newTmpVar(), t3 = irSim.newTmpVar(), t4 = irSim.newTmpVar();
     irSim.incCurDim();
     int cd = irSim.getCurDim();
     TR_Exp(sibling(node, 1), t2);
     TR_Exp(sibling(node, -1), t1);
     const string &ca = irSim.getCurArray();
-    irSim << irSim.icBinOp(IC_MUL, t2, t2, Operand(arrays[ca].getSize(cd)));
-     irSim << irSim.icBinOp(IC_ADD, t1, t1, t2);
-    if (cd) irSim << irSim.icAssign(place, t1);
+    irSim << irSim.icBinOp(IC_MUL, t3, t2, Operand(arrays[ca].getSize(cd)));
+    irSim << irSim.icBinOp(IC_ADD, t4, t1, t3);
+    if (cd) irSim << irSim.icAssign(place, t4);
     else {
-        irSim << irSim.icDeref(place, t1);
+        irSim << irSim.icDeref(place, t4);
         irSim.resetCurDim();
     }
 }
@@ -412,27 +728,31 @@ static void TR_Exp(ast *node, C_OP &place) {
         switch (c1->type) {
             case ID:  TR_ID(c1, place);  break;
             case INT: TR_INT(c1, place); break;
-            default:  assert(false);     break;
+            default:  assert(false);
         }
     }
 }
 
+static void TR_AND_OR(ast *node, C_OP &lt, C_OP &lf, bool isAnd = true) {
+    Operand label1 = irSim.newLabel();
+    if (isAnd) TR_Cond(sibling(node, -1), label1, lf);
+    else       TR_Cond(sibling(node, -1), lt, label1);
+    irSim << irSim.icLabel(label1);
+    TR_Cond(sibling(node, 1), lt, lf);
+}
+
 ///////////////////////////////////////// COND
 static void TR_Cond(ast *node, C_OP &lt, C_OP &lf) {
-    Operand t1, t2, label1;
-    C_OP *a = &label1, *b = &lf;
+    Operand t1, t2;
     switch (node->type) {
         case NOT:
             TR_Cond(sibling(node, 1), lf, lt);
             break;
         case OR: // no break
-            a = &lt;
-            b = &label1;
+            TR_AND_OR(node, lt, lf, false);
+            break;
         case AND:
-            label1 = irSim.newLabel();
-            TR_Cond(sibling(node, -1), *a, *b);
-            irSim << irSim.icLabel(label1);
-            TR_Cond(sibling(node, 1), lt, lf);
+            TR_AND_OR(node, lt, lf, true);
             break;
         case RELOP:
             t1 = irSim.newTmpVar();
@@ -550,3 +870,5 @@ static void TR_Stmt(ast *node) {
         default: assert(false); break;
     }
 }
+
+#endif
