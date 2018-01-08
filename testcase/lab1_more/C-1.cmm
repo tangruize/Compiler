@@ -1,0 +1,182 @@
+// C-1
+// 输入
+struct Product{
+    int name;
+
+} i ;
+int main(){
+    struct Type{
+
+        struct Product id;
+        int t;
+    }type;
+    i.name = 1;
+    type.id.name = 2 + i.name * 5;
+    type.t = 4;
+    return type.id.name * type.t;
+}
+// 输出
+// Program (1)
+// ExtDefList (1)
+// ExtDef (1)
+
+// Specifier (1)
+// StructSpecifier (1)
+// STRUCT
+
+// OptTag (1)
+// ID: Product
+
+// LC
+// DefList (2)
+// Def (2)
+// Specifier (2)
+// TYPE: int
+// DecList (2)
+// Dec (2)
+// VarDec (2)
+// ID: name
+// SEMI
+
+// RC
+// ExtDecList (3)
+// VarDec (3)
+
+// ID: i
+// SEMI
+// ExtDefList (4)
+// ExtDef (4)
+// Specifier (4)
+// TYPE: int
+// FunDec (4)
+// ID: main
+// LP
+// RP
+// CompSt (4)
+// LC
+// DefList (5)
+// Def (5)
+
+// Specifier (5)
+// StructSpecifier (5)
+// STRUCT
+
+// OptTag (5)
+// ID: Type
+// LC
+// DefList (6)
+// Def (6)
+// Specifier (6)
+// StructSpecifier (6)
+
+// STRUCT
+// Tag (6)
+// ID: Product
+
+// DecList (6)
+// Dec (6)
+// VarDec (6)
+// ID: id
+// SEMI
+
+// DefList (7)
+// Def (7)
+// Specifier (7)
+// TYPE: int
+// DecList (7)
+// Dec (7)
+// VarDec (7)
+// ID: t
+// SEMI
+
+// RC
+// DecList (8)
+// Dec (8)
+// VarDec (8)
+// ID: type
+// SEMI
+// StmtList (9)
+// Stmt (9)
+
+// Exp (9)
+// Exp (9)
+// Exp (9)
+// ID: i
+// DOT
+// ID: name
+// ASSIGNOP
+// Exp (9)
+
+// INT: 1
+// SEMI
+// StmtList (10)
+// Stmt (10)
+
+// Exp (10)
+// Exp (10)
+// Exp (10)
+// Exp (10)
+// ID: type
+
+// DOT
+// ID: id
+// DOT
+// ID: name
+// ASSIGNOP
+// Exp (10)
+// Exp (10)
+// INT: 2
+// PLUS
+// Exp (10)
+
+// Exp (10)
+// Exp (10)
+// ID: i
+// DOT
+// ID: name
+
+// STAR
+// Exp (10)
+// INT: 5
+// SEMI
+// StmtList (11)
+// Stmt (11)
+
+// Exp (11)
+// Exp (11)
+// Exp (11)
+// ID: type
+
+// DOT
+// ID: t
+// ASSIGNOP
+// Exp (11)
+// INT: 4
+// SEMI
+// StmtList (12)
+// Stmt (12)
+// RETURN
+// Exp (12)
+
+// Exp (12)
+// Exp (12)
+// Exp (12)
+// ID: type
+
+// DOT
+// ID: id
+// DOT
+// ID: name
+// STAR
+// Exp (12)
+
+// Exp (12)
+// ID: type
+
+// DOT
+// ID: t
+// SEMI
+// RC
+// 说明：使用的空格可以换位 Tab，注意缩进。
+
+

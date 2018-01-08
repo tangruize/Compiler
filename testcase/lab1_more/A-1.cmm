@@ -1,0 +1,13 @@
+// A-1
+// 输入
+int func_A1()
+{
+    int a1, _aaa_aa2;
+    float 3f;
+}
+// 输出
+// Error type B at line 4 : syntax error, near ';'
+// 说明：错误类型也可以是 A 类，或者一个 A 一个 B，但是只能在第 4 行。这里有一个非法标识
+// 符 3f，注意标识符可以以下划线开始，所以第三行正确。
+
+

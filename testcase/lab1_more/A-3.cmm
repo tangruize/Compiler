@@ -1,0 +1,14 @@
+// A-3
+// 输入
+int method() {
+    {
+        int a, b, c;
+        c = a + b * a;
+        b = a && c;
+        return b;
+    }
+// 输出
+// Error type B at line 8 : missing '}'
+// 说明：第 8 行缺少匹配的括号，可以报错在第七行，或者开始的括号所在的第一二行。
+
+

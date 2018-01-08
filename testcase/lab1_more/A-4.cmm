@@ -1,0 +1,12 @@
+// A-4
+// 输入
+int main(){
+    int a, b;
+    a = b + 1;
+    b = a + b
+}
+// 输出
+// Error type B at line 5: syntax error, before '}'
+// 说明：第 4 行缺少分号，也可报错在第 4 行。
+
+

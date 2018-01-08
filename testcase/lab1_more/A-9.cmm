@@ -1,0 +1,19 @@
+// A-9
+// 输入
+
+int function_1(int a)
+{
+    return a + 5;
+
+}
+
+int function_2(int b)
+{
+    c = function_1((2 * b);
+    return c;
+}
+// 输出
+// Error type B at line 8 : syntax error, after '('
+// 说明：第 8 行在函数调用时多了一个左括号。
+
+

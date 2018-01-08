@@ -1,0 +1,421 @@
+// C-2
+// 输入
+int a[10][5];
+int sum(){
+    int i, j, N = 10, M = 5;
+    int result;
+    while(i < 10)
+    {
+        while(j < 5)
+        {
+            result = result + a[i][j];
+            j = j + 1;
+
+        }
+        i = i + 1;
+    }
+    return result;
+}
+int main() {
+    int i1, j1, s;
+
+    while(i1 < 10) {
+        a[i1][0] = 1;
+        a[i1][1] = 2 * i1;
+        a[i1][2] = 1 + i1 * 2;
+        a[i1][3] = i1;
+        a[i1][4] = i1 * i1;
+        i1 = i1 + 1;
+    }
+
+    return sum();
+
+}
+// 输出
+// Program (1)
+// ExtDefList (1)
+// ExtDef (1)
+// Specifier (1)
+// TYPE: int
+// ExtDecList (1)
+// VarDec (1)
+// VarDec (1)
+// VarDec (1)
+// ID: a
+
+// LB
+// INT: 10
+// RB
+// LB
+// INT: 5
+// RB
+// SEMI
+// ExtDefList (2)
+// ExtDef (2)
+// Specifier (2)
+// TYPE: int
+// FunDec (2)
+// ID: sum
+// LP
+// RP
+// CompSt (2)
+
+// LC
+// DefList (3)
+// Def (3)
+// Specifier (3)
+// TYPE: int
+// DecList (3)
+// Dec (3)
+// VarDec (3)
+// ID: i
+
+// COMMA
+// DecList (3)
+// Dec (3)
+// VarDec (3)
+// ID: j
+
+// COMMA
+// DecList (3)
+// Dec (3)
+// VarDec (3)
+// ID: N
+
+// ASSIGNOP
+// Exp (3)
+// INT: 10
+
+// COMMA
+// DecList (3)
+// Dec (3)
+// VarDec (3)
+// ID: M
+
+// ASSIGNOP
+// Exp (3)
+// INT: 5
+
+// SEMI
+// DefList (4)
+
+// Def (4)
+// Specifier (4)
+// TYPE: int
+// DecList (4)
+// Dec (4)
+// VarDec (4)
+// ID: result
+
+// SEMI
+// StmtList (5)
+// Stmt (5)
+// WHILE
+// LP
+// Exp (5)
+// Exp (5)
+// ID: i
+// RELOP
+// Exp (5)
+// INT: 10
+
+// RP
+// Stmt (6)
+// CompSt (6)
+// LC
+// StmtList (7)
+// Stmt (7)
+// WHILE
+// LP
+// Exp (7)
+// Exp (7)
+// ID: j
+// RELOP
+// Exp (7)
+// INT: 5
+
+// RP
+// Stmt (8)
+// CompSt (8)
+// LC
+// StmtList (9)
+// Stmt (9)
+
+// Exp (9)
+// Exp (9)
+// ID: result
+
+// ASSIGNOP
+// Exp (9)
+// Exp (9)
+// ID: result
+
+// PLUS
+// Exp (9)
+// Exp (9)
+
+// Exp (9)
+// ID: a
+// LB
+// Exp (9)
+// ID: i
+// RB
+
+// LB
+// Exp (9)
+// ID: j
+// RB
+
+// SEMI
+// StmtList (10)
+// Stmt (10)
+
+// Exp (10)
+// Exp (10)
+// ID: j
+
+
+// ASSIGNOP
+// Exp (10)
+// Exp (10)
+// ID: j
+
+// PLUS
+// Exp (10)
+// INT: 1
+// SEMI
+// RC
+
+// StmtList (12)
+// Stmt (12)
+// Exp (12)
+// Exp (12)
+// ID: i
+
+// ASSIGNOP
+// Exp (12)
+// Exp (12)
+// ID: i
+
+// PLUS
+// Exp (12)
+// INT: 1
+// SEMI
+// RC
+
+// StmtList (14)
+// Stmt (14)
+// RETURN
+// Exp (14)
+// ID: result
+// SEMI
+
+// RC
+// ExtDefList (16)
+// ExtDef (16)
+
+// Specifier (16)
+// TYPE: int
+// FunDec (16)
+// ID: main
+// LP
+// RP
+// CompSt (16)
+// LC
+// DefList (17)
+// Def (17)
+
+// Specifier (17)
+// TYPE: int
+// DecList (17)
+// Dec (17)
+// VarDec (17)
+// ID: i1
+
+// COMMA
+// DecList (17)
+// Dec (17)
+// VarDec (17)
+// ID: j1
+
+// COMMA
+// DecList (17)
+// Dec (17)
+// VarDec (17)
+// ID: s
+
+// SEMI
+// StmtList (19)
+// Stmt (19)
+// WHILE
+// LP
+// Exp (19)
+
+// Exp (19)
+// ID: i1
+// RELOP
+// Exp (19)
+// INT: 10
+
+// RP
+// Stmt (19)
+// CompSt (19)
+// LC
+// StmtList (20)
+// Stmt (20)
+
+// Exp (20)
+// Exp (20)
+// Exp (20)
+// Exp (20)
+// ID: a
+
+// LB
+// Exp (20)
+// ID: i1
+// RB
+
+// LB
+// Exp (20)
+// INT: 0
+// RB
+// ASSIGNOP
+// Exp (20)
+// INT: 1
+// SEMI
+// StmtList (21)
+// Stmt (21)
+
+// Exp (21)
+// Exp (21)
+
+// Exp (21)
+// Exp (21)
+// ID: a
+
+// LB
+// Exp (21)
+// ID: i1
+// RB
+
+// LB
+// Exp (21)
+// INT: 1
+// RB
+// ASSIGNOP
+// Exp (21)
+// Exp (21)
+// INT: 2
+// STAR
+// Exp (21)
+// ID: i1
+// SEMI
+// StmtList (22)
+// Stmt (22)
+
+// Exp (22)
+// Exp (22)
+// Exp (22)
+// Exp (22)
+// ID: a
+
+// LB
+// Exp (22)
+// ID: i1
+// RB
+
+// LB
+// Exp (22)
+// INT: 2
+
+// RB
+// ASSIGNOP
+// Exp (22)
+// Exp (22)
+// Exp (22)
+// INT: 1
+// PLUS
+// Exp (22)
+// ID: i1
+// STAR
+// Exp (22)
+// INT: 2
+// SEMI
+// StmtList (23)
+// Stmt (23)
+
+// Exp (23)
+// Exp (23)
+// Exp (23)
+// Exp (23)
+// ID: a
+
+// LB
+// Exp (23)
+// ID: i1
+// RB
+
+// LB
+// Exp (23)
+// INT: 3
+// RB
+// ASSIGNOP
+// Exp (23)
+// ID: i1
+
+// SEMI
+// StmtList (24)
+// Stmt (24)
+
+// Exp (24)
+// Exp (24)
+// Exp (24)
+// Exp (24)
+// ID: a
+
+// LB
+// Exp (24)
+// ID: i1
+// RB
+
+// LB
+// Exp (24)
+// INT: 4
+// RB
+
+// ASSIGNOP
+// Exp (24)
+// Exp (24)
+// ID: i1
+// STAR
+// Exp (24)
+// ID: i1
+// SEMI
+// StmtList (25)
+// Stmt (25)
+// Exp (25)
+// Exp (25)
+// ID: i1
+// ASSIGNOP
+// Exp (25)
+// Exp (25)
+
+// ID: i1
+
+// PLUS
+// Exp (25)
+// INT: 1
+// SEMI
+// RC
+
+// StmtList (28)
+// Stmt (28)
+// RETURN
+// Exp (28)
+// ID: sum
+// LP
+// RP
+// SEMI
+// RC
+// 说明：考察对数组的翻译。
+

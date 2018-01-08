@@ -1,0 +1,19 @@
+// A-7
+//输入
+ struct List{
+ int name;
+ int list[10];
+ };
+ int main(){
+ struct List a, b, c;
+ int i, N =10;
+ while(i < N){
+ a.list[i] = b.list+c.list[i];
+ i = i + 1;
+ }
+ return 0;
+ }
+//输出
+// Error type 7 at line 9: Operands type mismatched
+//说明:加号操作符两边类型不匹配,这里可以另外报错误类型 5(赋值号两边错误类型不匹配),
+//须在 9 行。

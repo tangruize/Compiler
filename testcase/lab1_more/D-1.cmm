@@ -1,0 +1,108 @@
+// D-1
+// 输入
+int func_test()
+{
+    int _dec_ = 209;
+    int _oct_ = 0115;
+    int _dhex_ = 0x06Fab - _dec_number;
+    int _result_ = - dhex + oct * ( dec - 0X000F );
+}
+
+// 输出
+// Program (1)
+// ExtDefList (1)
+// ExtDef (1)
+// Specifier (1)
+// TYPE: int
+// FunDec (1)
+// ID: func_test
+// LP
+// RP
+// CompSt (2)
+// LC
+// DefList (3)
+// Def (3)
+// Specifier (3)
+// TYPE: int
+// DecList (3)
+// Dec (3)
+// VarDec (3)
+// ID: _dec_
+
+// ASSIGNOP
+// Exp (3)
+// INT: 209
+
+// SEMI
+// DefList (4)
+// Def (4)
+// Specifier (4)
+// TYPE: int
+// DecList (4)
+// Dec (4)
+
+// VarDec (4)
+// ID: _oct_
+// ASSIGNOP
+
+// Exp (4)
+// INT: 77
+
+// SEMI
+// DefList (5)
+// Def (5)
+// Specifier (5)
+// TYPE: int
+// DecList (5)
+// Dec (5)
+// VarDec (5)
+// ID: _dhex_
+
+// ASSIGNOP
+// Exp (5)
+// Exp (5)
+// INT: 28587
+
+// MINUS
+// Exp (5)
+// ID: _dec_number
+
+// SEMI
+// DefList (6)
+// Def (6)
+// Specifier (6)
+// TYPE: int
+// DecList (6)
+// Dec (6)
+
+// VarDec (6)
+// ID: _result_
+// ASSIGNOP
+// Exp (6)
+// Exp (6)
+// Exp (6)
+// MINUS
+// Exp (6)
+// ID: dhex
+
+// PLUS
+// Exp (6)
+// ID: oct
+
+// STAR
+// Exp (6)
+// LP
+// Exp (6)
+// Exp (6)
+// ID: dec
+
+// MINUS
+// Exp (6)
+// INT: 15
+// RP
+// SEMI
+// RC
+// 说明：1.1 分组的同学需要输出该语法树，8 进制和 16 进制数必须正确转换（209、77、28587 和
+// ）；其他分组的同学只要提示有错误，而且不输出语法树即可。
+
+

@@ -1,0 +1,35 @@
+// E-1
+//组测试用例针对 2.1 分组的同学
+//输入
+ struct Circle{
+ int x;
+ int y;
+ int r;
+ };
+ struct Square{
+ int a;
+ int b;
+ };
+ int Calculation1(struct Square square){
+ return square.a * square.b;
+ }
+ int Calculation2(struct Circle circle1);
+ int Calculation2(struct Circle circle){
+ return 3 * circle.r * circle.r;
+ }
+ int Calculation3(struct Circle circle3);
+ int Calculation3(struct Circle circle3,struct Circle circle33);
+ int Compare(struct Square s, struct Circle c){
+ if(Calculation1(s)>Calculation2(c))
+ return 1;
+ else return -1;
+ }
+ int Compare(struct Square s, struct Circle c,struct Circle cc);
+//输出
+// Error type 19 at line 22: Inconsistent declaration of function "
+//Calculation3"
+// Error type 19 at line 29: Inconsistent declaration of function "
+//Compare"
+// Error type 18 at line 21: Undefined function "Calculation3"
+//说明:仅 2.1 分组同学需要测试该用例,需要输出上述的错误信息,其中错误类型 18 也可以输
+//在第 22 行,错误类型 19 也可以输出在第 21,24 行。

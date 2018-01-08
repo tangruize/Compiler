@@ -1,0 +1,35 @@
+// B-2
+// 输入
+int dot[10];
+int val = 4;
+
+struct Vector
+{
+    int x, y;
+
+};
+
+int dotMultiply(struct Vector v1: struct Vector v2)
+{
+    return v1.x*v2.y - v1.y*v2.x;
+
+}
+
+int main()
+{
+    stuct Vector v1, v2;
+    v1.x = 1.2;
+    v1.y = 3.6;
+    v2.x = v1.x * val;
+    v2.y = 6.7;
+    return dotMultiply((v1, v2);
+
+}
+// 输出
+// Error type B at line 2, column 10: syntax error
+// Error type A at Line 9, Column 35: Mysterious character ':'
+// Error type B at line 16, column 17: syntax error
+// Error type B at line 22, column 28: syntax error
+// 说明：第 2 行声明中不可进行初始化；第 9 行逗号错写成冒号，可多报一个 B 类型错误；第 16
+// 行 struct 拼写错误；第 22 行函数调用多一个左括号。
+

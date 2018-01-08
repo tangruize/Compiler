@@ -1,0 +1,18 @@
+// A-6
+//输入
+ int cube (int n){
+ return n * n * n;
+ }
+ int main()
+ {
+ int a = 100, b = 4;
+ if(a < cube(b))
+ a = cube(b);
+ else
+ cube(b) = a;
+ return a;
+ }
+//输出
+// Error type 6 at line 11: The left-hand side of an assignment must be
+//a variable
+//说明:赋值号左边是一个不能为左值的类型(函数)。

@@ -1,0 +1,27 @@
+// E-2
+// 输入（E2-1）
+float function()
+{
+    float x1 = .e-1;
+    float x2 = 2.34e.-1;
+    return x1 + x2;
+
+}
+// 输出
+// Error type A at line 3: Illegal float number '.e-1'
+// Error type A at line 4: Illegal float number '2.34e.'
+// 说明：仅 1.2 分组同学需要测试这组用例，错误在于.e-1 和 2.34e.，识别成错误类型 B 也可以。
+// 输入（E2-2）
+float function()
+
+{
+    float a = e1.2;
+    float b = e-;
+}
+// 输出
+// Error type A at line 3: Illegal float number '.2'
+// Error type B at line 4: syntax error. (unexpected near ';')
+// 说明：仅 1.2 分组同学需要测试这组用例，错误在于指数是浮点数 1.2 和 -，识别成错误类型 B
+// 和 A 也可以。
+
+

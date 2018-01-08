@@ -5,7 +5,6 @@
 #if COMPILER_VERSION >= 3
 
 #include "ir.h"
-
 #include "tree.h"
 #include "symbol.h"
 
@@ -64,35 +63,6 @@ static const char *icFmt[] = {
 /* 23 IC_GT */     "IF %s > %s GOTO %s\n",
 /* 24 IC_LE */     "IF %s <= %s GOTO %s\n",
 /* 25 IC_GE */     "IF %s >= %s GOTO %s\n"
-};
-
-static const char *test_icFmt[] = {
-/* IR_NONE */   "",
-/* 1  IC_ADD */    "%s(%d) := %s(%d) + %s(%d)\n",
-/* 2  IC_SUB */    "%s(%d) := %s(%d) - %s(%d)\n",
-/* 3  IC_MUL */    "%s(%d) := %s(%d) * %s(%d)\n",
-/* 4  IC_DIV */    "%s(%d) := %s(%d) / %s(%d)\n",
-/* 5  IC_ASSIGN */ "%s(%d) := %s(%d)\n",
-/* 6  IC_REF */    "%s(%d) := &%s(%d)\n",
-/* 7  IC_DEREF */  "%s(%d) := *%s(%d)\n",
-/* 8  IC_DEREF_L*/ "*%s(%d) := %s(%d)\n",
-/* 9  IC_ARG */    "ARG %s(%d)\n",
-/* 10 IC_ARGADDR */"ARG &%s(%d)\n",
-/* 11 IC_RETURN */ "RETURN %s(%d)\n",
-/* 12 IC_CALL */   "%s(%d) := CALL %s(%d)\n",
-/* 13 IC_FUNC */   "FUNCTION %s(%d) :\n",
-/* 14 IC_GOTO */   "GOTO %s(%d)\n",
-/* 15 IC_DEC */    "DEC %s(%d) %s(%d)\n",
-/* 16 IC_LABEL */  "LABEL %s(%d) :\n",
-/* 17 IC_PARAM */  "PARAM %s(%d)\n",
-/* 18 IC_READ */   "READ %s(%d)\n",
-/* 19 IC_WRITE */  "WRITE %s(%d)\n",
-/* 20 IC_EQ */     "IF %s(%d) == %s(%d) GOTO %s(%d)\n",
-/* 21 IC_NE */     "IF %s(%d) != %s(%d) GOTO %s(%d)\n",
-/* 22 IC_LT */     "IF %s(%d) < %s(%d) GOTO %s(%d)\n",
-/* 23 IC_GT */     "IF %s(%d) > %s(%d) GOTO %s(%d)\n",
-/* 24 IC_LE */     "IF %s(%d) <= %s(%d) GOTO %s(%d)\n",
-/* 25 IC_GE */     "IF %s(%d) >= %s(%d) GOTO %s(%d)\n"
 };
 
 class Operand {
@@ -336,44 +306,8 @@ public:
         return pb;
     }
     const char *print(C_IC &i) const { return print3(i); }
-
-    const char *test_print3(C_IC &i) const {
-        if (i.arg2.kind == IR_NONE) return test_print2(i);
-        if (i.kind < IC_RELOP)
-            snprintf(pb, PBSIZE, test_icFmt[i.kind],
-                     i[0].str().c_str(), i[0].active,
-                     i[1].str().c_str(), i[1].active,
-                     i[2].str().c_str(), i[2].active);
-        else
-            snprintf(pb, PBSIZE, test_icFmt[i.kind],
-                     i[1].str().c_str(), i[1].active,
-                     i[2].str().c_str(), i[2].active,
-                     i[0].str().c_str(), i[0].active);
-        return pb;
-    }
-    const char *test_print2(C_IC &i) const {
-        if (i.arg1.kind == IR_NONE) return test_print1(i);
-        if (i.kind == IC_SUB)
-            snprintf(pb, PBSIZE, test_icFmt[i.kind],
-                     i[0].str().c_str(), i[0].active,
-                     OP_ZERO.str().c_str(), 0,
-                     i[1].str().c_str(), i[1].active);
-        else
-            snprintf(pb, PBSIZE, test_icFmt[i.kind],
-                     i[0].str().c_str(), i[0].active,
-                     i[1].str().c_str(), i[1].active);
-        return pb;
-    }
-    const char *test_print1(C_IC &i) const {
-        snprintf(pb, PBSIZE, test_icFmt[i.kind], i[0].str().c_str(), i[0].active);
-        return pb;
-    }
-    const char *test_print(C_IC &i) const { return test_print3(i); }
     void printStream(ostream &out) const {
         for_each(irList.begin(), irList.end(), [&out, this](C_IC &i){ out << print(i); });
-    }
-    void test_printStream(ostream &out) const {
-        for_each(irList.begin(), irList.end(), [&out, this](C_IC &i){ out << test_print(i); });
     }
 
     void setCurArray(const string &s) { curArray = s; }
@@ -480,14 +414,14 @@ void IrSim::optimizeAssign() {
                             }
                         }
                         if (n == 3) {
-                            cerr << "debug: index val != val (should not happen, ignore optimizing)" << endl;
+//                            cerr << "debug: index val != val (should not happen, ignore optimizing)" << endl;
                             m = -1;
                         }
                     }
                 }
-                else if (irList[k].target.active != 0 && irList[k].target.value[0] != 'v') {
-                    cerr << "debug: target < 0 (should not happen, ignore optimizing)" << endl;
-                }
+//                else if (irList[k].target.active != 0 && irList[k].target.value[0] != 'v') {
+//                    cerr << "debug: target < 0 (should not happen, ignore optimizing)" << endl;
+//                }
                 if (m == 0 && canDisable(irList[k].target.value, i)) {
                     irList[k].disable();
                     isOpted = true;
@@ -502,7 +436,7 @@ void IrSim::optimizeAssign() {
 }
 
 void IrSim::optimize() {
-//    buildBB();
+    buildBB();
     do {
         buildActive();
         optimizeAssign();
@@ -579,18 +513,9 @@ extern "C" void genIR() {
         node = child(node, 2);
     }
 //    irSim.printStream(cout);
-
     ofstream out(output_file + string(".orig.ir"));
     if (out.is_open()) {
         irSim.printStream(out);
-        out.close();
-    }
-
-    irSim.buildBB();
-    irSim.buildActive();
-    out.open(output_file + string(".test.ir"));
-    if (out.is_open()) {
-        irSim.test_printStream(out);
         out.close();
     }
 

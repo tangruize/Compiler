@@ -1,0 +1,19 @@
+
+// A-1
+//输入
+ struct Product{
+ int x;
+ int y;
+ int z;
+ }a;
+ int testFunction(int x1, int y1)
+ {
+ a.x = x1;
+ a.y = y1;
+ a.z = z1;
+ return 0;
+ }
+//输出
+// Error type 1 at line 10: Undefined variable "z1"
+//说明:a.z = z1 这一句包含未定义的变量 z1,这里也可以另外报出错误类型 5(= 两边类型不匹
+//)。

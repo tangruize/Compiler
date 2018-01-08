@@ -1,0 +1,14 @@
+// A-2
+// 输入
+int func()
+{
+    int a, b;
+    a = b + 4 * a;
+    b = a && 2 || 4;
+    return a ~ b;
+}
+// 输出
+// Error type A at line 6 : mysteriously character '~'
+// 说明：必须有 type A 错误；可以多报一个 type B 错误。这里有一个非法的符号 ˜。
+
+

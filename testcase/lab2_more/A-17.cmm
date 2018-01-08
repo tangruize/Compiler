@@ -1,0 +1,23 @@
+// A-17
+//输入
+ struct Food {
+ int price, weight;
+ };
+ struct Drink {
+ int sweet1;
+ int price1;
+ };
+ struct Drink2 {
+ int sweet2;
+ int price2;
+ };
+ int main()
+ {
+ struct Food meat;
+ struct Food2 vegetable;
+ struct Drink orange;
+ return 0;
+ }
+//输出
+// Error type 17 at line 15: Undefined struct "Food2"
+//说明:使用了未定义的结构体 Food2。

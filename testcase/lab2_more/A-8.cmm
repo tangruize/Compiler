@@ -1,0 +1,21 @@
+// A-8
+//输入
+ struct Vector{
+ float x;
+ float y;
+ float list[5];
+ };
+ struct Vector structMutipleFunction(struct Vector A, struct Vector B)
+{
+ struct Vector result;
+ int i, N =5;
+ result.x = A.x + B.x;
+ result.y = A.y + B.y;
+ while(i < N){
+ result.list[i] = A.list[i] + B.list[i];
+ }
+ return result.list;
+ }
+//输出
+// Error type 8 at line 14: The return type mismatched
+//说明:返回值实际类型与函数定义不一致,报在第 6 行也是对的。

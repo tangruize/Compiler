@@ -1,0 +1,28 @@
+// D-1
+//输入
+ struct Circle{
+ int x;
+ int y;
+ int r;
+ };
+ struct Square{
+ int a;
+ int b;
+ };
+ int Calculation1(struct Square square){
+ return square.a * square.b;
+ }
+ int Calculation2(struct Circle circle1);
+ int Calculation2(struct Circle circle){
+ return 3 * circle.r * circle.r;
+ }
+ int Compare(struct Square s, struct Circle c);
+ int Compare(struct Square s, struct Circle c){
+ if(Calculation1(s)>Calculation2(c))
+ return 1;
+ else return -1;
+ }
+//输出
+ // 正 常 返 回 , 没 有 任 何 输 出 。
+//说明:对于 2.1 分组的同学,应该没有任何输出,对于其他分组的同学,应该在第 16,21 行报出
+//语法错误 (Error type B)。

@@ -1,0 +1,47 @@
+// B-1
+// 输入
+struct Product
+{
+    int price;
+    int weight;
+}p[10],
+
+int Calculate(struct Product product)
+{
+
+    if(product.weight < 1)
+        return product.price;
+    else
+        return product.price / 2 * ( product->weight - 1 ) + product.
+                price;
+}
+
+int main()
+{
+    int priceA[10], weightA[10];
+    int result;
+    int i, N = 10;
+    while(i < N){
+        priceA[i] = i + (i * 2 - 1);
+        weightA[i] = 2 * i;
+        i = i + 1;
+    }
+    i = 0;
+    while(i < N){
+
+        p[i].price = priceA[i];
+        p[i].weight = weightA[];
+        result = result + Calculate(p[i]]);
+    }
+    return result;
+
+}
+// 输出
+// Error type B at line 7: syntax error, maybe you should check the definition.
+// Error type B at line 12: syntax error, after '('.
+// Error type B at line 29: syntax error, before ';'.
+// Error type B at line 30: syntax error, after '('.
+// 说明：结构体定义分号错写成逗号，也可以报错在第五行；第 12 行结构体域访问符号用错；第
+// 行数组访问下标为空；第 30 行多一个右中括号。
+
+

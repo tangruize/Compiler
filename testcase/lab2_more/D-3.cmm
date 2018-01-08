@@ -1,0 +1,41 @@
+// D-3
+//输入
+ struct A{
+ int a;
+ int a_array[10][5];
+ struct innerA{
+ int innera[10];
+ } innerA_node;
+ };
+ struct B{
+ int b;
+ int b_array[5][2];
+ struct innerB{
+ int innerb[20];
+ } innerB_node;
+ };
+ struct C{
+ int c;
+};
+float cc;
+struct};
+D{
+int d;
+float dd;
+int main(){
+struct A tempA, tempA2;
+struct B tempB;
+struct C tempC, tempC2;
+struct D tempD;
+tempA = tempB;
+tempC = tempD;
+tempA = tempA2;
+tempC = tempC2;
+return 0;
+}
+//输出
+// 正 常 返 回 , 没 有 任 何 输 出 。
+//说明:对于分组 2.3 的同学,应该没有任何输出,其他分组的同学应该在 32 行 33 行识别出类型
+//匹配。(函数参数类型 Error type 5)
+//测试用例
+//组测试用例共 3 个,针对不同分组进行测试

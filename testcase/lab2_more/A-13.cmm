@@ -1,0 +1,21 @@
+// A-13
+//输入
+ struct Type{
+ int name;
+ int operator;
+ };
+ struct {
+ struct Type a;
+ int b;
+ } v;
+ int test_function()
+ {
+ int temp = 2;
+ v.a.name = temp + v.b;
+ v.a.operator = temp;
+ v.b.name = v.b * v.b;
+ return v.b;
+ }
+//输出
+// Error type 13 at line 14: Illegal use of "."
+//说明:对非结构体变量使用“.”操作符,同时可以报出错误类型 5。

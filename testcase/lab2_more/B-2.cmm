@@ -1,0 +1,38 @@
+// B-2
+//输入
+ struct {
+ int price;
+ int sales[100];
+ } salesDay[5];
+ struct Sum {
+ int price_sum = 0;
+ int sales_sum;
+ };
+ struct Summ MethodDisplay(){
+ struct Sum sum_result;
+ int i, j, sum_all, sum, M = 5, N = 100;
+ int price_all = 0;
+ while(i < M){
+ sum = 0;
+ while(j < N){
+ sum = sum + salesDay[i].sales[j];
+ j = j[i] + 1;
+ }
+ i = i + 1;
+ sum_all = sum_all + sum;
+ price_all = salesDay[i].price * sum + price_all;
+ }
+ sum_result.price_sum = price_all;
+ sum_result1.sales_sum = sum_all;
+ return sum_result;
+ }
+//输出
+// Error type 15 at Line 7: Initialized variable "price_sum" in struct
+// Error type 17 at Line 11: Undefined structure "Summ"
+// Error type 10 at Line 19: "j" is not an array
+// Error type 1 at Line 26: Undefined variable "sum_result1"
+//说明:输出中的 4 个错误为本质错误,是必须要报出来的,这些错误可能会有连锁反应,例如:
+// 19 行的错误可能会导致错误类型 5 和 7,因为 j[i] 的类型未知;第 26 行可能会报出错误类型
+//锁不仅限与此,合理即可。
+//测试用例
+//组测试用例共 2 个,不包含任何错误。

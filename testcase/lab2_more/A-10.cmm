@@ -1,0 +1,22 @@
+// A-10
+//输入
+ int main()
+ {
+ int a[10][10], b[10][10];
+ int i, j, N = 10;
+ while(i < N)
+ {
+ while(j < N)
+ {
+ a[i][j] = b[i][j] + i * j;
+ a[i][j-1] = a[i][j][0];
+ j = j + 1;
+ }
+ i = i + 1;
+ }
+ return 0;
+ }
+//输出
+// Error type 10 at line 10: Illegal use of "[]"
+//说明:对非数组变量使用 [] 操作符,这里会连带报出错误类型 5,因为赋值号右边的类型可以算
+//是“未知”。

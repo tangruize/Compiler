@@ -1,0 +1,23 @@
+// A-5
+//输入
+ struct Product {
+ int name;
+ int weight;
+ float price;
+ };
+ struct ProductB {
+ int nameB;
+ float weightB;
+ float priceB;
+ };
+ int main(){
+ struct Product a;
+ struct ProductB b;
+ a.name = b.nameB;
+ a.weight = b.weightB;
+ a.price = b.priceB;
+ return 0;
+ }
+//输出
+// Error type 5 at line 15: Type mismatched
+//说明:赋值号两边类型不匹配(float 赋值给 int)。

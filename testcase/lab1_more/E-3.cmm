@@ -1,0 +1,201 @@
+// E-3
+// 输入（E3-1）
+/*
+* @code
+*/
+
+/*
+* @param int a
+*/
+
+int func(int a) {
+    int i = 1, N = 10;//\/*/\/\/\/\/\/\/\/ i = i +1;
+    int sum;
+    while(i /*>=<*/ <= N) {
+        sum /*/ ~~ */= sum + i;
+        i = i + 1;
+/*
+TODO
+definition 12345
+
+*/
+    }
+
+    put_int/*(*/(sum);
+// assert(sum == ?);
+    return /*-1;*/0;
+
+}
+/* end of function/*\*/
+// 输出
+// Program (9)
+// ExtDefList (9)
+// ExtDef (9)
+// Specifier (9)
+// TYPE: int
+// FunDec (9)
+// ID: func
+// LP
+// VarList (9)
+// ParamDec (9)
+// Specifier (9)
+// TYPE: int
+// VarDec (9)
+// ID: a
+
+// RP
+// CompSt (9)
+// LC
+// DefList (10)
+// Def (10)
+
+// Specifier (10)
+// TYPE: int
+// DecList (10)
+// Dec (10)
+
+// VarDec (10)
+// ID: i
+// ASSIGNOP
+
+// Exp (10)
+// INT: 1
+// COMMA
+// DecList (10)
+// Dec (10)
+// VarDec (10)
+// ID: N
+
+// ASSIGNOP
+// Exp (10)
+// INT: 10
+
+// SEMI
+// DefList (11)
+// Def (11)
+// Specifier (11)
+// TYPE: int
+
+// DecList (11)
+// Dec (11)
+// VarDec (11)
+// ID: sum
+// SEMI
+
+// StmtList (12)
+// Stmt (12)
+// WHILE
+// LP
+// Exp (12)
+// Exp (12)
+// ID: i
+
+// RELOP
+// Exp (12)
+// ID: N
+
+// RP
+// Stmt (12)
+
+// CompSt (12)
+// LC
+// StmtList (13)
+// Stmt (13)
+// Exp (13)
+// Exp (13)
+// ID: sum
+
+// ASSIGNOP
+// Exp (13)
+// Exp (13)
+// ID: sum
+
+// PLUS
+// Exp (13)
+// ID: i
+// SEMI
+
+// StmtList (14)
+// Stmt (14)
+// Exp (14)
+// Exp (14)
+// ID: i
+
+// ASSIGNOP
+// Exp (14)
+// Exp (14)
+// ID: i
+
+// PLUS
+// Exp (14)
+// INT: 1
+// SEMI
+
+// RC
+// StmtList (20)
+// Stmt (20)
+// Exp (20)
+
+// ID: put_int
+// LP
+// Args (20)
+// Exp (20)
+// ID: sum
+
+// RP
+// SEMI
+// StmtList (22)
+// Stmt (22)
+// RETURN
+// Exp (22)
+// INT: 0
+// SEMI
+// RC
+// 说明：必须输出正确的语法树，否则该用例不得分
+// 输入（E3-2）
+/*
+* comments
+*/
+int main() {
+    int n, n2,/**/ n1, n0//\//*/;
+
+    while(n < 10) {
+        n2 = n / 1 + 2;
+/*This is a comment.\
+/\//\/******\/\/\/\/
+if(n == (n0)) {
+put_int(n);
+
+}
+*/
+        n1 = (n / 10) + 10;
+        n0 = n + 10;
+
+//put_int(n);\\*/;
+        if(n == func(n2) * func(n1) + func(n0))
+            put_int(/*(m+*/n));
+
+/*\}*\/*
+}*/
+        n /*_1*/= n + 1;
+    }
+    return /**/0;
+}
+
+int func(int n) { //function
+    return n /*\*/* n /**\2*/* n;
+
+}
+
+/**end of function~
+// 输出
+// Error type B at line 7, near 'while'
+// Error type B at line 19, near ')'
+// Error type A at Line 32: met EOF
+// 说明：第 5 行分号被注释掉，也可以报错在第 5 或 7 行。第 19 行函数调用多一个括号。最后一
+// 个错误针对未终止的注释进行测试，如果打印了语法树，或者程序异常终止、死循环无法退出
+// 等，则该用例不得分。不限定错误类型以及提示方式，但是出错位置必须限定在 32 行或者以后
+// 的位置；直接提示“未终止的注释”也可以。
+// 结束语
+// 如果对本测试用例有任何疑议，可以写邮件与王慧妍助教联系，注意同时抄送给许老师。
+

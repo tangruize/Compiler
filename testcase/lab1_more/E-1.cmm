@@ -1,0 +1,25 @@
+// E-1
+// 这组测试用例针对 1.1 分组的同学
+// 输入（E-1）
+int test_for_wrong_oct_number()
+{
+    int _correct_oct_number_ = 007216;
+    int _wrong_oct_number_ = 01826;
+    int _correct_oct_number2_ = 0000126;
+}
+// 输出
+// Error type A at Line 4: Illegal octal number "01826"
+// 说明：仅 1.1 分组同学需要测试这个用例，针对错误的 8 进制数 01826，识别成错误类型 B 也可以。
+// 输入（E-2）
+int test_for_wrong_dhex_number()
+{
+    int _wrong_dhex_number_ = 0xFs396;
+    int _wrong_dhex_number2_ = 0xxF396;
+}
+// 输出
+// Error type A at Line 3: Illegal hexadecimal number "0xFs396"
+// Error type A at Line 4: Illegal hexadecimal number "0xxF396"
+// 说明：仅 1.1 分组同学需要测试这个用例，针对错误的 16 进制数 0xFs396 和 0xxF396，识别成
+// 错误类型 B 也可以。
+
+

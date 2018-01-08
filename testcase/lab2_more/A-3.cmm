@@ -1,0 +1,19 @@
+// A-3
+//输入
+ struct Product{
+ int name;
+ int weight;
+ int price;
+ }p;
+ int main(){
+ int Product, x1, x2, x3;
+ p.name = x1;
+ p.weight = x2;
+ p.price = x3;
+ Product = p.weight * p.price;
+ return 0;
+ }
+//输出
+// Error type 3 at line 8: Redefined variable "Product"
+//说明:重复定义的变量 Product,这里如果错误位置写为第 1 行也算对,可以在第 12 行报出连锁
+//应导致的错误类型 1。

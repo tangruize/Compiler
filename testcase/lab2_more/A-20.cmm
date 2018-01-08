@@ -1,0 +1,24 @@
+// A-20
+//输入
+ struct Food {
+ int price;
+ float weight;
+ }food;
+ int main()
+ {
+ int a[10];
+ int temp = 20;
+ struct Food food2;
+ food2.price = 25;
+ food2.weight = 0.5;
+ food.price = temp;
+ food = a + food2;
+ return 0;
+ }
+//输出
+// Error type 7 at line 14: Type mismatched
+//说明:操作符与操作数不匹配,多报错误类型 5 也可以。
+//测试用例
+//组测试用例共 2 个,其中包含多个语义错误。每一行的语义错误会分别算分,同一个语义
+//误可能会有连锁反应,其处理方式与 A 类用例相同,只要是合理的(包括但不限于下面明确
+//出的情况),都不会影响得分。

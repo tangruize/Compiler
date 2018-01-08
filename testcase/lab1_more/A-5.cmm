@@ -1,0 +1,14 @@
+// A-5
+// 输入
+int array (int a, int b)
+{
+    int a1, b1[10,2];
+
+    b1[a] = b;
+    b1[a] = a1 + b1[a];
+}
+// 输出
+// Error type B at line 3 : syntax error, near ']'
+// 说明：第 3 行数组定义格式错误。
+
+

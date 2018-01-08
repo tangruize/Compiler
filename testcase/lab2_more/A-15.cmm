@@ -1,0 +1,20 @@
+// A-15
+//输入
+ struct Food {
+ int num, weight;
+ float price;
+ float time;
+ };
+ int main()
+ {
+ struct Food food;
+ struct Food2{
+ int weight1 = 2;
+ }food2;
+ food.weight = food2.weight1;
+ return food.weight;
+ }
+//输出
+// Error type 15 at line 11: Initialized struct field
+//说明:结构体内部域进行初始化。有的同学由于 Food2 定义错误,就没有将其放入符号表,因
+//会在第 13 行报 food2 未定义等连锁错误,这个不影响得分。

@@ -1,0 +1,19 @@
+// A-18
+//输入
+ struct Food {
+ int price;
+ float weight;
+ struct Price{
+ int p;
+ }price;
+ };
+ int main()
+ {
+ struct Food food;
+ food.price = 25;
+ food.weight = 0.5;
+ return 0;
+ }
+//输出
+// Error type 15 at line 6: Redefined field "price"
+//说明:在结构体中重复定义域。
