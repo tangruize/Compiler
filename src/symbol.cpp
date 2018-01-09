@@ -26,47 +26,53 @@ public:
 
     Env(): Env(NULL) {}
 
-    struct attr* findvar(const string &s) {
-        map<string, attr>::iterator found;
-        for (Env *e = this; e != NULL; e = e->pre) {
-            found = e->var_table.find(s);
-            if (found != e->var_table.end())
-                return &(found->second);
-        }
-        return NULL;
-    }
+    struct attr* findvar(const string &s);
 
-    struct attr* findfunc(const string &s) {
-        map<string, attr>::iterator found;
-        for (Env *e = this; e != NULL; e = e->pre) {
-            found = e->func_table.find(s);
-            if (found != e->func_table.end())
-                return &(found->second);
-        }
-        return NULL;
-    }
+    struct attr* findfunc(const string &s);
 
-    bool insertvar(const string &s, const struct attr &a) {
-        if (var_table.find(s) != var_table.end())
-            return false;
-        var_table[s] = a;
-        if (a.kind == BASIC) {
-            a.basic->name = strdup(s.c_str());
-        }
-        return true;
-    }
+    bool insertvar(const string &s, const struct attr &a);
 
-    bool insertfunc(const string &s, const struct attr &a) {
-        if (func_table.find(s) != func_table.end())
-            return false;
-        func_table[s] = a;
-        return true;
-    }
+    bool insertfunc(const string &s, const struct attr &a);
 
-    class Env* getpre() const {
-        return pre;
-    }
+    class Env* getpre() const { return pre; }
 };
+
+struct attr *Env::findvar(const string &s) {
+    map<string, attr>::iterator found;
+    for (Env *e = this; e != NULL; e = e->pre) {
+        found = e->var_table.find(s);
+        if (found != e->var_table.end())
+            return &(found->second);
+    }
+    return NULL;
+}
+
+struct attr *Env::findfunc(const string &s) {
+    map<string, attr>::iterator found;
+    for (Env *e = this; e != NULL; e = e->pre) {
+        found = e->func_table.find(s);
+        if (found != e->func_table.end())
+            return &(found->second);
+    }
+    return NULL;
+}
+
+bool Env::insertvar(const string &s, const struct attr &a) {
+    if (var_table.find(s) != var_table.end())
+        return false;
+    var_table[s] = a;
+    if (a.kind == BASIC) {
+        a.basic->name = strdup(s.c_str());
+    }
+    return true;
+}
+
+bool Env::insertfunc(const string &s, const struct attr &a) {
+    if (func_table.find(s) != func_table.end())
+        return false;
+    func_table[s] = a;
+    return true;
+}
 
 static Env *current = NULL;
 
