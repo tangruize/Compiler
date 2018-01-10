@@ -5,6 +5,8 @@
 #ifndef COMPILER_TYPE_H
 #define COMPILER_TYPE_H
 
+#include "version.h"
+
 #if COMPILER_VERSION >= 2
 
 void semchecker();

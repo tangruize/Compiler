@@ -1,3 +1,4 @@
+#include "version.h"
 #include "tree.h"
 #include "parser.h"
 #include "error.h"
@@ -68,38 +69,50 @@ FUNC_ALLOC(fpval, FLOAT, double)
 FUNC_ALLOC(idval, ID, char*)
 FUNC_ALLOC(typeval, TYPE, const char*)
 
-static void printastdepth(struct ast *root, int depth) {
+static void printastdepth(struct ast *root, int depth, FILE *file) {
     if (root->type != NullNode) {
-        printf("%*s%s", depth * 2, depth != 0 ? " " : "", root->name);
+        if (!file)
+            file = stdout;
+        fprintf(file, "%*s%s", depth * 2, depth != 0 ? " " : "", root->name);
         if (root->val)
             switch (root->type) {
                 case TYPE:
-                    printf(": %s", root->val->typeval);
+                    fprintf(file, ": %s", root->val->typeval);
                     break;
                 case ID:
-                    printf(": %s", root->val->idval);
+                    fprintf(file, ": %s", root->val->idval);
                     break;
                 case INT:
-                    printf(": %ld", (long) root->val->numval);
+                    fprintf(file, ": %ld", (long) root->val->numval);
                     break;
                 case FLOAT:
-                    printf(": %lf", root->val->fpval);
+                    fprintf(file, ": %lf", root->val->fpval);
                     break;
                 default:
                     abort();
             }
         if (root->pos) {
-            printf(" (%d)", root->pos->first_line);
+            fprintf(file, " (%d)", root->pos->first_line);
         }
-        putchar('\n');
+        fputc('\n', file);
     }
-    if (root->left) printastdepth(root->left, depth + 1);
-    if (root->right) printastdepth(root->right, depth);
+    if (root->left) printastdepth(root->left, depth + 1, file);
+    if (root->right) printastdepth(root->right, depth, file);
 }
 
 void printast(struct ast *root) {
 #if COMPILER_VERSION == 1
-    printastdepth(root, 0);
+    printastdepth(root, 0, stdout);
+#elif COMPILER_VERSION >= 3
+    extern const char *output_file;
+    char path_buf[1024];
+    if (snprintf(path_buf, 1024, "%s.syntax", output_file) < 1024) {
+        FILE *file = fopen(path_buf, "w");
+        if (file != NULL) {
+            printastdepth(root, 0, file);
+        }
+        fclose(file);
+    }
 #endif
 }
 

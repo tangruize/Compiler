@@ -2,6 +2,8 @@
 // Created by tangruize 17-12-15.
 //
 
+#include "version.h"
+
 #if COMPILER_VERSION >= 3
 
 #include "ir.h"
@@ -20,7 +22,7 @@ const char *output_file;
 
 static const vector<string> relOp = {"==", "!=", "<", ">", "<=", ">="};
 static const char *icFmt[] = {
-/* IR_NONE */   "",
+/* IR_NONE */      "",
 /* 1  IC_ADD */    "%s := %s + %s\n",
 /* 2  IC_SUB */    "%s := %s - %s\n",
 /* 3  IC_MUL */    "%s := %s * %s\n",
@@ -279,7 +281,13 @@ bool IrSim::useLastArrayAddr() {
     return true;
 }
 
-static IrSim irSim;
+void IrSim::getFunctions(vector<int> &f) {
+    for (auto &i : functions)
+        f.push_back(i);
+    f.push_back((int)irList.size());
+}
+
+IrSim irSim;
 
 bool InterCode::doArith() {
     if (kind >= IC_ADD && kind <= IC_DIV) {
@@ -400,11 +408,19 @@ extern "C" void genIR() {
 
 #if COMPILER_VERSION == 3
     out.open(output_file);
+#elif COMPILER_VERSION > 3
+    ofstream out(output_file + string(".ir"));
+#endif
     if (out.is_open()) {
         irSim.printStream(out);
         out.close();
     }
+#if COMPILER_VERSION == 3
+    else {
+        cerr << "ERROR: Cannot open " << output_file << endl;
+    }
 #endif
+
 #endif
 }
 

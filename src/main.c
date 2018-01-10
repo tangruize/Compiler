@@ -1,3 +1,4 @@
+#include "version.h"
 #include "parser.h"
 #include "lexer.h"
 #include "error.h"
@@ -8,10 +9,12 @@
 #if COMPILER_VERSION >= 3
 #include "ir.h"
 #endif
+#if COMPILER_VERSION >= 4
+#include "code.h"
+#endif
 
 int main(int argc, char *argv[]) {
 #if COMPILER_VERSION >= 3
-    extern const char *output_file;
     if (argc < 3)
         usage();
     FILE *infile = fopen(argv[1], "r");
@@ -22,8 +25,12 @@ int main(int argc, char *argv[]) {
     yyparse();
     if (!error_state)
         semchecker();
-    if (!error_state)
+    if (!error_state) {
         genIR();
+#if COMPILER_VERSION >= 4
+        genCode();
+#endif
+    }
 #else
     init();
     FILE *infile = stdin; /* use stdin if no arg supplied */
@@ -72,5 +79,3 @@ int main(int argc, char *argv[]) {
 #endif
     return error_state;
 }
-
-

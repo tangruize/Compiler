@@ -1,15 +1,13 @@
 #ifndef COMPILER_TREE_H
 #define COMPILER_TREE_H
 
+#include "version.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 #include "parser.h"
-
-#ifndef COMPILER_VERSION
-#define COMPILER_VERSION 3
-#endif
 
 union value {
     long long numval;

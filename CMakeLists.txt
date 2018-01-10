@@ -16,7 +16,7 @@ add_flex_bison_dependency(Scanner Parser)
 
 set_property(DIRECTORY PROPERTY ADDITIONAL_MAKE_CLEAN_FILES "${CMAKE_CURRENT_BINARY_DIR}/lexer.h")
 
-set(SOURCE_FILES ${BISON_Parser_OUTPUTS} ${FLEX_Scanner_OUTPUTS} lex/lexer.l parser/parser.y src/main.c src/error.c include/error.h src/tree.c include/tree.h src/semantics.c include/semantics.h src/symbol.cpp include/symbol.h src/ir.cpp include/ir.h src/code.cpp include/code.h)
+set(SOURCE_FILES ${BISON_Parser_OUTPUTS} ${FLEX_Scanner_OUTPUTS} lex/lexer.l parser/parser.y src/main.c src/error.c include/error.h src/tree.c include/tree.h src/semantics.c include/semantics.h src/symbol.cpp include/symbol.h src/ir.cpp include/ir.h src/code.cpp include/code.h include/version.h)
 add_executable(CompilerLab1 ${SOURCE_FILES})
 add_executable(CompilerLab2 ${SOURCE_FILES})
 add_executable(CompilerLab3 ${SOURCE_FILES})

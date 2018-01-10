@@ -1,6 +1,8 @@
 #ifndef COMPILER_ERROR_H
 #define COMPILER_ERROR_H
 
+#include "version.h"
+
 #include <err.h>
 #include <assert.h>
 

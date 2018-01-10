@@ -5,6 +5,8 @@
 #ifndef COMPILER_IR_H
 #define COMPILER_IR_H
 
+#include "version.h"
+
 #if COMPILER_VERSION >= 3
 
 #ifdef __cplusplus
@@ -49,7 +51,6 @@ public:
     void clear() { kind = IR_NONE; value.clear(); }
     Operand &makeActive() { active = 0; return *this; }
     void setActive(int i) { active = i; }
-    int nextActive() const { return active; }
     bool operator==(const Operand &rval) { return kind == rval.kind && value == rval.value; }
 };
 
@@ -72,6 +73,8 @@ public:
 };
 typedef const InterCode C_IC;
 
+typedef vector<InterCode> IrList_t;
+
 class IrSim {
 private:
     const string tmpVarPrefix = "t";
@@ -82,7 +85,7 @@ private:
     int tmpSeq;
     int varSeq;
     int labelSeq;
-    vector<InterCode> irList;
+    IrList_t irList;
     set<string> argSet;
 
     //For array type
@@ -103,13 +106,11 @@ private: // for optimization
     void unsetUsage(Operand &op, int blk)         { doSetUsage(op, blk); }
     void optimizeAssign();
     bool canDisable(const string &val, int exclude);
-
-public:
     void buildBB();
     void buildActive();
 
 public:
-    IrSim(): tmpSeq(1), varSeq(1), labelSeq(1), curDim(-1) { pb = new char[PBSIZE]; }
+    IrSim(): tmpSeq(1), varSeq(1), labelSeq(1), curDim(-1) { pb = new char[PBSIZE]; isOpted = false; }
     ~IrSim() { delete[] pb; }
     Operand newTmpVar() { return Operand(OP_VARIABLE, tmpVarPrefix + to_string(tmpSeq++)); }
     Operand newLabel()  { return Operand(OP_LABEL,    labelPrefix  + to_string(labelSeq++)); }
@@ -162,12 +163,17 @@ public:
     bool isGoto(int k) { return k == IC_GOTO || (k >= IC_RELOP && k <= IC_RELOP_LAST); }
 
     void optimize();
+    IrList_t &getIrList() { return irList; }
+    void getFunctions(vector<int> &f);
 };
+
+extern IrSim irSim;
 
 extern "C" {
 #endif
 
 void genIR();
+extern const char *output_file;
 
 #ifdef __cplusplus
 }

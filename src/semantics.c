@@ -2,6 +2,8 @@
 // Created by tangruize on 17-11-25.
 //
 
+#include "version.h"
+
 #if COMPILER_VERSION >= 2
 
 #include "semantics.h"

@@ -5,6 +5,8 @@
 #ifndef COMPILER_SYMBOL_H
 #define COMPILER_SYMBOL_H
 
+#include "version.h"
+
 #if COMPILER_VERSION >= 2
 
 #ifdef __cplusplus
