@@ -65,7 +65,6 @@ static string arith(const string &instr, const string &val2) {
 static string arg(bool isAddr) {
     string result;
     if (isAddr) result = "la $t0, " + getTarSp() + "\n";
-//    else result = "lw $t0, " + getTarSp() + "\n";
     disableSave();
     ++paraStack;
     return result + "addi $sp, $sp, -4\nsw $t0, 0($sp)\n";
@@ -90,7 +89,7 @@ static std::function<string(void)> translateFuncTable[] = {
 /* 1  IC_ADD */    []{ return arith("add", constArg2()); },
 /* 2  IC_SUB */    []{ return arith("sub", "-" + constArg2()); },
 /* 3  IC_MUL */    []{ return arith("mul", ""); },
-/* 4  IC_DIV */    []{ return "div $t1, t2\nmflo t0\n"; },
+/* 4  IC_DIV */    []{ return "div $t1, $t2\nmflo $t0\n"; },
 /* 5  IC_ASSIGN */ []{ return "move $t0, $t1\n"; },
 /* 6  IC_REF */    []{ return "la $t0, " + getSp(localVarsOff[tmpIC->arg1.value]) + "\n"; }, //NOTE: may not used
 /* 7  IC_DEREF */  []{ return "lw $t0, 0($t1)\n"; },
@@ -131,16 +130,15 @@ static void GEN_function(int start, int end) { // end not included
         if (irList[i].kind == IR_NONE) continue;
         else if (irList[i].kind == IC_PARAM) localVarsOff[irList[i].target.value] = --para;
         else if (irList[i].kind == IC_DEC) array[irList[i].target.value] = atoi(irList[i].arg1.value.c_str()) / 4 - 1;
-        else break;
     }
-    for (; i < end; ++i) {
+    for (i = start + 1; i < end; ++i) {
         for (int j = 0; j < 3; ++j) {
             C_OP &op = irList[i][j];
             if (!op.value.empty() && (op.value[0] == 'v' || op.value[0] == 't'))
                 if (localVarsOff.find(op.value) == localVarsOff.end()) {
-                    localVarsOff[op.value] = ++local;
                     if (array.find(op.value) != array.end())
                         local += array[op.value];
+                    localVarsOff[op.value] = ++local;
                 }
         }
     }
