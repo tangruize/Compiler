@@ -291,7 +291,7 @@ IrSim irSim;
 
 bool InterCode::doArith() {
     if (kind >= IC_ADD && kind <= IC_DIV) {
-        int a1, a2;
+        int a1 = 0, a2 = 0;
         bool isA1 = arg1.getInt(a1), isA2 = arg2.getInt(a2);
         if (arg2.kind == IR_NONE && kind == IC_SUB) {
             a1 = -a1;
