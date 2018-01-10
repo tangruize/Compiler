@@ -53,7 +53,9 @@ int restorestdin() {
 /* invoke program with argument '--help' */
 void usage() {
     extern char *program_invocation_name;
-#if COMPILER_VERSION >= 3
+#if COMPILER_VERSION >= 4
+    fprintf(stderr, "Usage: %s [CMM source] [OUTPUT asm]\n", program_invocation_name);
+#elif COMPILER_VERSION >= 3
     fprintf(stderr, "Usage: %s [CMM source] [OUTPUT ir]\n", program_invocation_name);
 #else
     fprintf(stderr, "Usage: %s [CMM source]\n", program_invocation_name);
