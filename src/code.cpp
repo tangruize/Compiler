@@ -91,7 +91,7 @@ static std::function<string(void)> translateFuncTable[] = {
 /* 3  IC_MUL */    []{ return arith("mul", ""); },
 /* 4  IC_DIV */    []{ return "div $t1, $t2\nmflo $t0\n"; },
 /* 5  IC_ASSIGN */ []{ return "move $t0, $t1\n"; },
-/* 6  IC_REF */    []{ return "la $t0, " + getSp(localVarsOff[tmpIC->arg1.value]) + "\n"; }, //NOTE: may not used
+/* 6  IC_REF */    []{ return "la $t0, " + getSp(localVarsOff[tmpIC->arg1.value]) + "\n"; },
 /* 7  IC_DEREF */  []{ return "lw $t0, 0($t1)\n"; },
 /* 8  IC_DEREF_L*/ []{ disableSave(); return "sw $t1, 0($t0)\n"; },
 /* 9  IC_ARG */    []{ return arg(false); },
@@ -101,7 +101,7 @@ static std::function<string(void)> translateFuncTable[] = {
 /* 13 IC_FUNC */   []{ disableSave(); string sp = local == 0 ? "": "addi $sp, $sp, -" + to_string(local * 4) + "\n";
                        return getFuncName(tmpIC->target.value) + ":\n" + sp;},
 /* 14 IC_GOTO */   []{ disableSave(); return "j " + tmpIC->target.value + "\n"; },
-/* 15 IC_DEC */    []{ disableSave(); return ""; },
+/* 15 IC_DEC */    []{ disableSave(); return ""; }, //Checked earlier
 /* 16 IC_LABEL */  []{ disableSave(); return tmpIC->target.value + ":\n"; },
 /* 17 IC_PARAM */  []{ disableSave(); return ""; }, //Checked earlier
 /* 18 IC_READ */   []{ return funCall("read"); },
